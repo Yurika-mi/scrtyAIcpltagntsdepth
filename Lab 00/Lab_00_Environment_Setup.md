@@ -1,4 +1,4 @@
-<img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/bd6a0472-cb58-4feb-861a-e3bc164dcb23" /># ラボ 00：環境設定 — Zava Corporation のAIエージェントインフラストラクチャ
+# ラボ 00：環境設定 — Zava Corporation のAIエージェントインフラストラクチャ
 
 ## はじめに
 
