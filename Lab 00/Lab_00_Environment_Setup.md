@@ -454,64 +454,65 @@
 
 ---
 
-### Task 2: Create the Zava Finance Agent
+### タスク 2: Zava 財務エージェントを作成する
 
-1. In the left navigation pane, select **Agents**. Then select **Create blank agent**.
+1. 左側のナビゲーションペインで、**[エージェント]** を選択します。その後、**[空白のエージェントを作成]** を選択します。
 
-	![](./media/pp22.png)
+     ![](./media/Lab-00-81.png)
 
-3. In the **Name** field, enter `Zava Finance Agent` and click on **Create**.
+3. **[名前]** フィールドに `Zava 財務エージェント` と入力し、**[作成]** をクリックします。
 
-	![](./media/pp50.png)
+     ![](./media/Lab-00-82.png)
 
-4. In the **Description** field, enter `An AI assistant that helps Zava finance team members retrieve budget information, invoice data, and financial reports.` Then select **Save**.
+4. **[説明]** フィールドに ` Zava 財務チームメンバーが予算情報、請求書データ、および財務レポートを取得するために役立つ AI アシスタント` と入力します。その後、**[保存]** を選択します。
 
-5. In the **Instructions** field, select **Edit**.
+5. **[指示]** フィールドで、**[編集]** を選択します。
 
-6. Enter the following and select **Save**.
+6. 以下を入力して、**[保存]** を選択します。
 
     ```
-    You are the Zava Finance Agent. Answer questions using only the information in the Zava Finance SharePoint knowledge base. Do not share financial data with users who have not been granted access to the Finance SharePoint site. Always respond professionally and flag any requests for data outside your knowledge base.
+    あなたは、Zava 財務エージェントです。質問への回答は、Zava Finance の SharePoint ナレッジベースに記載されている情報のみを用いて行ってください。Finance SharePoint サイトへのアクセス権限が与えられていないユーザーには、財務データを共有しないでください。常にプロフェッショナルな態度で対応し、ナレッジベースの範囲外のデータに関するリクエストがあった場合は、その旨を報告してください。
     ```
 
-	![](./media/pp51.png)
+     ![](./media/Lab-00-83.png)
 
-7. Scroll down and on the agent configuration page, locate the **Knowledge** section. Select **+ Add knowledge**.
+7. 下にスクロールし、エージェント構成ページで **[ナレッジ]** セクションを見つけます。**[+ ナレッジを追加]** を選択します。
 
-    ![](./media/kn.png) 
+     ![](./media/Lab-00-84.png)
 
-8. On the **Add knowledge** panel, select **SharePoint**.
+8. **[ナレッジを追加]** パネルで、**[SharePoint]** を選択します。
 
-	![](./media/image82.png)
+     ![](./media/Lab-00-85.png)
 
-9. In the **SharePoint URL** field, enter the SharePoint Finance site URL in the following format:
+9. **[SharePoint URL]** フィールドに、次の形式で SharePoint Finance サイトのURLを入力します。
     **https://[TenantPrefix].sharepoint.com/sites/Operations<inject key="Deployment ID" enableCopy="false"></inject>**
 
-    > **Note:** Replace `[TenantPrefix]` with your tenant prefix from the **Environment** tab.
+    > **注記:** `[TenantPrefix]` を **[環境]** タブから取得したテナントプレフィックスに置き換えます。
 
-10. Select **Add** to connect the SharePoint site as the knowledge source.
+10. **[追加]** を選択して SharePoint サイトをナレッジソースとして接続します。
 
-	![](./media/pp52.png)
+     ![](./media/Lab-00-86.png)
 
-11. Then select **Add to agent**.
+11. その後、**[エージェントに追加]** を選択します。
 
-    ![](./media/l0e2t2s10.png)
+     ![](./media/Lab-00-87.png)
 
-12. On the agent configuration page, locate the **Channels** tab on the top section (select **+** if it is not directly visible).
+12. エージェント構成ページで、上部セクションにある **[チャネル]** タブを見つけます。（直接表示されていない場合は **[+]** を選択）
 
-	![](./media/pp53.png)
+     ![](./media/Lab-00-88.png)
 
-13. Select **Microsoft 365 Copilot and Microsoft Teams** to add them as channels.
+13. **[Microsoft 365 Copilot および Microsoft Teams]** を選択してチャネルとして追加します。
 
-	![](./media/pp54.png)
+     ![](./media/Lab-00-89.png)
 
-14. Then select **Add channel**.
+14. その後、**[チャネルを追加]** を選択します。
 
-	![](./media/L00-E2-T2-S14.png)
+     ![](./media/Lab-00-90.png)
 
-15. In the **Ready to publish?** dialog, select **Publish**. Close the tab.
+15. **[公開の準備はできていますか?]** ダイアログで、**[公開]** を選択します。タブを閉じます。
 
-	![](./media/image89.png)
+     ![](./media/Lab-00-91.png)
+
 ---
 
 ### Task 3: Create the Zava IT Support Agent
