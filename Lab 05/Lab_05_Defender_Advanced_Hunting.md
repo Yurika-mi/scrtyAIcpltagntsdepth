@@ -1,4 +1,4 @@
-# Lab 05: Microsoft Defender — AI エージェント インベントリと脅威ハンティング
+# ラボ 05: Microsoft Defender — AI エージェント インベントリと脅威ハンティング
 
 ## 概要
 
@@ -92,7 +92,7 @@ Zava のセキュリティ オペレーション センター (SOC) チームは
 
    ![](./media/appid2.png)
  
-    - C:\LabFiles\Create-CopilotWebhookApp.ps1 から **Create-CopilotWebhookApp.ps1** をアップロードします。
+    - C:\ラボFiles\Create-CopilotWebhookApp.ps1 から **Create-CopilotWebhookApp.ps1** をアップロードします。
     
     - 確認ポップアップでスクリプトがアップロードされていることを確認します。
 
@@ -321,7 +321,7 @@ Zava のセキュリティ オペレーション センター (SOC) チームは
        Version,
        Model,
        LastUpdatedDateTime,
-       Availability,
+       Avaiラボility,
        Permissions
    | sort by CreatedDateTime asc
    ```
