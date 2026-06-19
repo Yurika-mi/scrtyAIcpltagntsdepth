@@ -1,141 +1,143 @@
-# Lab 02: Entra Agent Identity Configuration and Monitoring
+<img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/560cc4e8-f1a2-4d5d-9dd4-5fa682329ddb" /># ラボ 02: Entra エージェント ID の構成と監視
 
-## Introduction
+## 概要
 
-Zava's security team has received confirmation from the CISO that all AI agent identities must be reviewed and brought under governance before Day 2 security policy configuration begins. The registry check in Lab 01 confirmed that agents are active and visible — but agent identity ownership has not been assigned, and no one has verified what permissions or roles these identities currently hold.
+Zava のセキュリティチームは、CISO から、Day 2 セキュリティポリシー構成が開始される前に、すべての AI エージェント ID をレビューし、ガバナンスの下に置く必要があることを確認するよう指示を受けました。ラボ 01 のレジストリ チェックにより、エージェントがアクティブで可視化されていることが確認されました。ただし、エージェント ID の所有権が割り当てられておらず、これらのID が現在保持している権限やロールが検証されていません。
 
-Every Copilot Studio agent deployed in the Zava environment was automatically assigned a unique identity in Microsoft Entra ID when Entra Agent Identity was enabled in Lab 00. These identities appear in the **Agent ID** section of the Microsoft Entra admin center and can be governed like any other identity in the tenant — with owners, sponsors, access controls, audit logs, and Conditional Access policies.
+Zava 環境にデプロイされたすべての Copilot Studio エージェントは、ラボ 00 で Entra エージェント ID が有効化されたときに、Microsoft Entra ID で一意のID が自動的に割り当てられました。これらのID は Microsoft Entra 管理センターの **[エージェント ID]** セクションに表示され、テナント内の他のID と同様にガバナンスできます。所有者、スポンサー、アクセス制御、監査ログ、および条件付きアクセスポリシーを使用してガバナンスします。
 
-In this lab, you will locate the Zava agent identities, review their current configuration, assign Patti Fernandes as owner of the Zava Finance Agent, and disable and re-enable the Zava HR Assistant identity to simulate an identity quarantine action.
-
----
-
-## Objectives
-
-- Locate all Zava agent identities in the Microsoft Entra admin center via Entra agents.
-- Review agent identity metadata including Status, Sponsors, Owners, Blueprint ID, Object ID, and Created on date.
-- Assign Patti Fernandes as owner of the Zava Finance Agent identity.
-- Review current permissions and Entra roles assigned to the agent identity.
-- Inspect available audit log and sign-in log entries for the agent identity.
-- Review Conditional Access policy and Access package links from the agent identity panel.
-- Disable the Zava HR Assistant identity and verify that end-user access is blocked.
-- Re-enable the Zava HR Assistant identity and confirm it returns to Active status.
+このラボでは、Zava エージェント ID を特定し、現在の構成をレビューし、Patti Fernandes を Zava 財務エージェント の所有者として割り当て、Zava HR アシスタント ID を無効にして再度有効にして、アイデンティティ隔離アクションをシミュレートします。
 
 ---
 
-## Lab Duration
+## 目的
 
-Estimated time: **10 minutes**
+- Microsoft Entra 管理センターの Entra agents を介してすべての Zava エージェント ID を特定する。
+- ステータス、スポンサー、所有者、Blueprint ID、オブジェクト ID、作成日などのエージェント ID メタデータをレビューする。
+- Patti Fernandes を Zava 財務エージェント エージェント ID の所有者として割り当てる。
+- エージェント ID に割り当てられている現在の権限と Entra ロールをレビューする。
+- エージェント ID の利用可能な監査ログおよびサインインログエントリを検査する。
+- エージェント ID パネルから条件付きアクセスポリシーとアクセスパッケージリンクをレビューする。
+- Zava HR アシスタント ID を無効にし、エンドユーザーアクセスがブロックされることを確認する。
+- Zava HR アシスタント ID を再度有効にし、アクティブステータスに戻ることを確認する。
 
 ---
 
-## Exercise 1: Locate and Inspect the Zava Finance Agent Identity
+## ラボ所要時間
 
-### Task 1: Navigate to Entra Agent Identities
+推定所要時間：**10分**
 
-1. Open a browser and navigate to Microsoft entra admin center and Sign in with **ODL User** credentials if prompted.
+---
+
+## 演習 1: Zava 財務エージェントの ID を特定して確認する
+
+
+### タスク 1: Entra Agent Identities に移動する
+
+1. ブラウザを開き、Microsoft Entra 管理センターに移動してサインインします。プロンプトが表示された場合は **ODL User** 認証情報を使用します。
 
     ```
     https://entra.microsoft.com
     ```
  
-   - **Email/Username:** <inject key="AzureAdUserEmail"></inject>
-   - **Password:** <inject key="AzureAdUserPassword"></inject>
+   - **メールアドレス/ユーザー名:** <inject key="AzureAdUserEmail"></inject>
+   - **パスワード:** <inject key="AzureAdUserPassword"></inject>
  
 
-2. In the left navigation pane, select **Agents**. On the **Agent identities** page, review the list of agent identities registered in the tenant.
+2. 左側のナビゲーションペインで、**[エージェント]** を選択します。**[エージェント ID]** ページで、テナントに登録されているエージェント ID のリストをレビューします。
 
-	![](./media/l02-e1-t1-s2.png)
+	![](./media/Lab-02-01.png)
 
-3. Confirm that the following three agents appear in the list:
+4. 次の3つのエージェントがリストに表示されていることを確認します。
 
-   | Display Name | Status |
+   | 表示名 | ステータス |
    |---|---|
-   | Zava HR Assistant (Microsoft Copilot Studio) | Active |
-   | Zava Finance Agent (Microsoft Copilot Studio) | Active |
-   | Zava IT Support Agent (Microsoft Copilot Studio) | Active |
+   | Zava HR アシスタント (Microsoft Copilot Studio) | アクティブ |
+   | Zava 財務エージェント (Microsoft Copilot Studio) | アクティブ |
+   | Zava IT Support Agent (Microsoft Copilot Studio) | アクティブ |
 
-	![](./media/l02-e1-t1-s3.png)
+	![](./media/Lab-02-02.png)
 
-   > **Note:** Agent identities are suffixed with **(Microsoft Copilot Studio)** to indicate the platform that provisioned them. If any agent is not listed, wait five minutes and refresh the page. Agent identity provisioning can take time after initial publishing in Copilot Studio.
-
----
-
-### Task 2: Review the Zava Finance Agent Identity Overview
-
-1. On the **Agent identities** page, select **Zava Finance Agent (Microsoft Copilot Studio)**.
-
-	![](./media/l02-e1-t2-s1.png)
-2. On the **Overview** page, review and note the following fields:
-
-   - **Status** — confirm it reads **Active**.
-   - **Sponsors** — note the user avatars currently listed as sponsors.
-   - **Owners** — confirm the current value. Note whether an owner is assigned or whether the field shows a dash ( **-** ), indicating no owner is set.
-   - **Blueprint ID** — note the GUID value.
-   - **Object ID** — note the GUID value.
-   - **Agent blueprint** — note the link text (Microsoft Copilot Studio agent identity).
-   - **Created on** — note the date.
-
-3. On the right panel, under **Agent identity's access**, note the current values for:
-
-   - **Permissions**
-   - **Entra roles**
-
-	   ![](./media/l02-e1-t2-s3.png)
-
-      > **Note:** In a newly provisioned environment, both values will show **0**. This confirms that the Zava Finance Agent identity has not been granted any API permissions or Entra directory roles, which is the expected least-privilege starting state.
+   > **注記:** エージェント ID には **(Microsoft Copilot Studio)** というサフィックスが付いており、それらをプロビジョニングしたプラットフォームを示します。エージェントがリストに表示されていない場合は、5分待ってページを更新してください。エージェント ID のプロビジョニングは Copilot Studio での初期公開後に時間がかかる場合があります。
 
 ---
 
-### Task 3: Assign Patti Fernandes as Owner of the Zava Finance Agent Identity
+### タスク 2: Zava 財務エージェント エージェント ID 概要をレビューする
 
-1. In the left sub-navigation of the Zava Finance Agent identity page, under **Access**, select **Owners and sponsors**.
+1. **[エージェント ID]** ページで、**[Zava 財務エージェント (Microsoft Copilot Studio)]** を選択します。
 
-	![](./media/l02-e1-t3-s1.png)
+	![](./media/Lab-02-03.png)
 
-2. On the **Owners and sponsors** , select **+ Add** and click **Add owner**.
+2. **[概要]** ページで、以下のフィールドをレビューしてメモします。
 
-	![](./media/l02-e1-t3-s2.png)
+   - **ステータス** — **[アクティブ]** と表示されることを確認します。
+   - **スポンサー** — 現在スポンサーとしてリストされているユーザーアバターをメモします。
+   - **所有者** — 現在の値を確認します。所有者が割り当てられているか、またはフィールドがダッシュ( **-** )を表示しているか（所有者が設定されていないことを示す）をメモします。
+   - **Blueprint ID** — GUID 値をメモします。
+   - **オブジェクトID** — GUID 値をメモします。
+   - **エージェントブループリント** — リンクテキストをメモします(Microsoft Copilot Studioエージェント ID )。
+   - **作成日** — 日付をメモします。
 
-3. In the search field on the **Add owners** panel, enter `Patti`. Select **Patti Fernandes** from the results and click **Select** to confirm.
+3. 右側のパネルの **[エージェント ID のアクセス]** の下で、以下の現在の値をメモします。
 
-	![](./media/l02-e1-t3-s3.png)
+   - **権限**
+   - **Entraロール**
 
-4. Confirm that **Patti Fernandes** now appears as the **Full Owner** on the **Owners and sponsors** page.
+	![](./media/Lab-02-04.png)
 
-	![](./media/l02-e1-t3-s4.png)
-
-   > **Note:** Assigning an owner to an agent identity establishes accountability for that identity within the Entra governance model. Owners receive access review notifications and are responsible for attesting to the identity's continued need and appropriate access.
-
----
-
-## Exercise 2: Disable and Re-enable the Zava HR Assistant
-
-### Task 1: Disable the Zava HR Assistant Identity
-
-1. Naviagate back to **Agent identities** page in Microsoft Entra, and select **Zava HR Assistant** agent identity.
-
-	![](./media/l02-e2-t1-s1.png)
-
-2. In the toolbar at the top of the page, select **Disable**.
-
-	![](./media/l02-e2-t1-s2.png)
-
-3. In the confirmation dialog, confirm the action to disable the identity.
-
-	![](./media/l02-e2-t1-s3.png)
-
-4. Wait for the page to refresh.
-
-5. On the **Overview** page, confirm that **Status** now reads **Disabled**.
-
-	![](./media/l02-e2-t1-s4.png)
+      > **注記:** 新しくプロビジョニングされた環境では、両方の値が **0** を表示します。これにより、Zava 財務エージェント エージェント ID に API 権限または Entra ディレクトリロールが付与されていないことが確認され、これは予想される最小権限開始状態です。
 
 ---
 
-### Task 2: Verify that End-User Access is Blocked
+### タスク 3: Patti Fernandes を Zava 財務エージェント エージェント ID の所有者として割り当てる
 
-1. Open a new **InPrivate** or **Incognito** browser window. Navigate to Copilot studio and Click on **Sign in**.
+1. Zava 財務エージェント エージェント ID ページの左側のサブナビゲーションで、**[アクセス]** の下から **[所有者とスポンサー]** を選択します。
+
+	![](./media/Lab-02-05.png)
+
+2. **[所有者とスポンサー]** で、**[+ 追加]** を選択して、**[所有者を追加]** をクリックします。
+
+	![](./media/Lab-02-06.png)
+
+3. **[所有者を追加]** パネルの検索フィールドに `Patti` を入力します。結果から **[Patti Fernandes]** を選択し、**[選択]** をクリックして確認します。
+
+	![](./media/Lab-02-07.png)
+
+4. **[Patti Fernandes]** が **[所有者とスポンサー]** ページで **[完全な所有者]** として表示されるようになったことを確認します。
+
+	![](./media/Lab-02-08.png)
+
+   > **注記:** エージェント ID に所有者を割り当てることで、Entra ガバナンスモデル内のそのID に対する説明責任を確立します。所有者はアクセスレビュー通知を受け取り、ID の継続的な必要性と適切なアクセスを証明する責任があります。
+
+---
+
+## 演習 2: Zava HR アシスタント を無効化・再度有効化する
+
+### タスク 1: Zava HR アシスタントの ID を無効化する
+
+1. Microsoft Entra の **[エージェント ID]** ページに戻り、**[Zava HR アシスタント]** エージェント ID を選択します。
+
+	![](./media/Lab-02-09.png)
+
+2. ページの上部のツールバーで、**[無効化]** を選択します。
+
+	![](./media/Lab-02-10.png)
+
+3. 確認ダイアログで、ID を無効化するアクションを確認します。
+
+	![](./media/Lab-02-11.png)
+
+4. ページがリフレッシュされるまで待機します。
+
+5. **[概要]** ページで、**[ステータス]** が **[無効化]** と表示されるようになったことを確認します。
+
+	![](./media/Lab-02-12.png)
+
+---
+
+### タスク 2: エンド ユーザー アクセスがブロックされていることを確認する
+
+1. 新しい **InPrivate** または **Incognito** ブラウザウィンドウを開きます。Copilot studio に移動し、**[サインイン]** をクリックします。
 
     ```
     https://copilot.microsoft.com
@@ -143,58 +145,59 @@ Estimated time: **10 minutes**
 
    ![](./media/ex2-1.png)
 
-1. Click on Continue with Microsoft.
+1. **[Microsoftで続行]** をクリックします。
 
-	![](./media/ex2-2.png)
+	![](./media/Lab-02-13.png)
 
-1. Sign in with **ODL User** credentials from the **Environment** tab.
+1. **[環境]** タブから **ODL User** 認証情報でサインインします。
 
-   - **Email/Username:** <inject key="AzureAdUserEmail"></inject>
-   - **Password:** <inject key="AzureAdUserPassword"></inject>
+   - **メールアドレス/ユーザー名:** <inject key="AzureAdUserEmail"></inject>
+   - **パスワード:** <inject key="AzureAdUserPassword"></inject>
 
-1. Click on the **Work** Tab on the **Which Copilot experience are you looking for?**.
+1. **[どのCopilotエクスペリエンスをお探しですか?]** で **[Work]** タブをクリックします。
 
-	![](./media/ex2-4.png)
+	![](./media/Lab-02-14.png)
 
-2. In the left navigation, select **All agents** and then search for `Zava`.
+2. 左側のナビゲーションで、**[すべてのエージェント]** を選択してから `Zava` を検索します。
 
-3. Note the results — the agent **Zava HR Assistant** should not be visible.
+3. 結果をメモします。エージェント **[Zava HR アシスタント]** は表示されないはずです。
 
-   > **Note:** Identity disable propagation may take up  time . If the agent responds normally immediately after disabling, wait for some time and attempt again. you can proceed to Task 3 as it may take time.
+   > **注記:** ID 無効化の伝播には時間がかかる場合があります。無効化直後にエージェントが通常どおり応答する場合は、時間をおいて再度試してください。タスク3に進むことができます。時間がかかる場合があります。
+
 ---
 
-### Task 3: Re-enable the Zava HR Assistant Identity
+### タスク 3: Zava HR アシスタント ID を再度有効化する
 
-1. Return to the **ODL User** browser session at Microsoft Entra admin center 
+1. Microsoft Entra 管理センターの **ODL User** ブラウザセッションに戻ります。
 
     ```
     https://entra.microsoft.com
 	```
 
-2. In the left navigation pane, select **Agents**. On the **Agent identities** page, select **Zava HR Assistant (Microsoft Copilot Studio)**.
+2. 左側のナビゲーションペインで、**[エージェント]** を選択します。**[エージェント ID ]** ページで、**[Zava HR アシスタント (Microsoft Copilot Studio)]** を選択します。
 
-3. On the **Overview** page, in the toolbar, select **Enable**.
+3. **[概要]** ページで、ツールバーの **[有効化]** を選択します。
 
 	![](./media/l02-e2-t3-s3.png)
 
-   > **Note:** The toolbar button will have changed from **Disable** to **Enable** after the identity was disabled in Task 1.
+   > **注記:** タスク1でID が無効化された後、ツールバーボタンは **[無効化]** から **[有効化]** に変わります。
 
-4. In the confirmation dialog, confirm the action to enable the identity.
+4. 確認ダイアログで、ID を有効化するアクションを確認します。
 
 	![](./media/l02-e2-t3-s4.png)
 
-5. Wait for the page to refresh.
+5. ページがリフレッシュされるまで待機します。
 
-6. On the **Overview (Preview)** page, confirm that **Status** now reads **Active**.
+6. **[概要(プレビュー)]** ページで、**[ステータス]** が **[アクティブ]** と表示されるようになったことを確認します。
 
 	![](./media/l02-e2-t3-s5.png)
 
-7. Repeat the end-user access check to confirm the agent is accessible again.
+7. エンドユーザー アクセス チェックを繰り返して、エージェントが再度アクセス可能であることを確認します。
 
 ---
 
-## Summary
+## まとめ
 
-In this lab, you located all three Zava agent identities in the Microsoft Entra admin center using the **Agent ID** left navigation entry. You reviewed the Zava Finance Agent identity overview, confirming its Active status, Blueprint ID, Object ID, and the current absence of assigned owners. You assigned Patti Fernandes as owner of the Zava Finance Agent identity to establish accountability within the Entra governance model. You reviewed the agent identity's current permissions and Entra roles, confirming zero standing access as expected in a least-privilege deployment.
+このラボでは、左側のナビゲーション **[エージェント ID]** エントリを使用して Microsoft Entra 管理センターで3つの Zava エージェント ID すべてを特定しました。Zava 財務エージェント エージェント ID 概要をレビューし、アクティブステータス、Blueprint ID、オブジェクトID、および割り当てられた所有者の現在の欠如を確認しました。Patti Fernandes を Zava 財務エージェントのエージェント ID の所有者として割り当てて、Entra ガバナンスモデル内で説明責任を確立しました。エージェント ID の現在の権限と Entra ロールをレビューし、最小権限デプロイメントで予想される 0 のスタンディングアクセスを確認しました。
 
-Finally, you disabled the Zava HR Assistant identity to simulate an identity quarantine action, verified that the agent was no longer accessible via Microsoft 365 Copilot, and re-enabled the identity to restore normal access. The Zava agent identities are now confirmed as visible, governed with ownership assigned, and responsive to identity-level lifecycle controls. Day 1 is complete. Day 2 labs build on this foundation to apply security policies, Conditional Access controls, and threat detection configuration across the Zava agent environment.
+最後に、Zava HR アシスタント ID を無効化してアイデンティティ隔離アクションをシミュレートし、Microsoft 365 Copilot 経由でエージェントにアクセスできなくなったことを確認し、ID を再度有効化して通常のアクセスを復元しました。Zava エージェント ID が可視化され、所有権が割り当てられたガバナンスされた状態にあり、ID レベルのライフサイクル制御に応答することが確認されました。Day 1 は完了しました。Day 2 ラボはこの基盤の上に構築され、Zava エージェント環境全体にセキュリティポリシー、条件付きアクセス制御、および脅威検出構成を適用します。
