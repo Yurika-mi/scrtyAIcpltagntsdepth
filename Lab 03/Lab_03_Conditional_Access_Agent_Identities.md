@@ -1,39 +1,39 @@
-# Lab 03: Conditional Access for Zava Agent Identities
+# ラボ 03: Zava エージェント ID の条件付きアクセス
 
-## Introduction
+## 概要
 
-Zava's CISO has mandated that only reviewed and approved AI agents may access company resources. Any agent that has not been through the governance review process must be blocked automatically. Additionally, if any agent identity shows signs of compromise — such as anomalous token acquisition behaviour — it must be blocked immediately without manual intervention.
+Zava の最高情報セキュリティ責任者(CISO)は、レビュー済みおよび承認された AI エージェントのみが企業リソースにアクセスできることを義務付けました。ガバナンスレビュープロセスを経ていないエージェントはすべて自動的にブロックされる必要があります。さらに、エージェント識別情報がトークン取得動作の異常など、侵害の兆候を示す場合は、手動による介入なしに即座にブロックされる必要があります。
 
-You will implement both controls using Conditional Access for Agent Identities (Preview). Patti Fernandes will validate that policy evaluation is visible in sign-in logs. This lab establishes the Zava agent governance baseline that all subsequent security labs build upon.
+これら両方の制御を Agent Identities の条件付きアクセス(プレビュー)を使用して実装します。Patti Fernandes がサインインログでのポリシー評価の可視化を検証します。このラボは、後続のすべてのセキュリティラボが構築する Zava エージェントガバナンスベースラインを確立します。
 
-Conditional Access for Agent Identities is a preview capability in Microsoft Entra ID that extends Zero Trust controls to AI agents. you will create custom security attributes to classify the approval status of each Zava agent, build a Conditional Access policy that blocks all unapproved agent identities from accessing organisational resources, and create a second policy that blocks any agent identity exhibiting high-risk behaviour based on Entra ID Protection signals. The policies will first be validated in Report-only mode before being switched to enforcement. Patti Fernandes will investigate agent sign-in events to confirm Conditional Access policy evaluation.
-
----
-
-## Objectives
-
-- Create a custom security attribute set and approval status attribute for agent classification.
-- Assign approval status attributes to all three Zava agent identities.
-- Create a Conditional Access policy that blocks all unapproved agent identities.
-- Validate the policy scope using the What If tool to confirm an untagged agent would be blocked.
-- Switch the policy to enforcement mode.
-- Create a second Conditional Access policy that blocks high-risk agent identities.
-- Generate agent sign-in events by invoking the Zava HR Assistant as Patti Fernandes.
-- Investigate Conditional Access policy evaluation in agent identity sign-in logs.
+Agent Identities の条件付きアクセスは Microsoft Entra ID のプレビュー機能であり、Zero Trust コントロールをエージェントに拡張します。カスタムセキュリティ属性を作成して各 Zava エージェントの承認ステータスを分類し、未承認のエージェント識別情報が組織リソースにアクセスするのをブロックする条件付きアクセスポリシーを構築し、Entra ID Protection 信号に基づいて危険度が高いエージェント識別情報をブロックする2番目のポリシーを作成します。ポリシーはまずレポートのみモードで検証されてから、強制に切り替えられます。Patti Fernandes がエージェントサインインイベントを調査して、条件付きアクセスポリシー評価を確認します。
 
 ---
 
-## Lab Duration
+## 目的
 
-Estimated time: **30 minutes**
+- エージェント分類用のカスタムセキュリティ属性セットおよび承認ステータス属性を作成する。
+- 3つの Zava エージェント識別情報すべてに承認ステータス属性を割り当てる。
+- 未承認のエージェント識別情報をブロックする条件付きアクセスポリシーを作成する。
+- Whatif ツールを使用してポリシースコープを検証し、タグなしエージェントがブロックされることを確認する。
+- ポリシーを強制モードに切り替える。
+- 危険度が高いエージェント識別情報をブロックする2番目の条件付きアクセスポリシーを作成する。
+- Patti Fernandes として Zava HR Assistant を呼び出してエージェントサインインイベントを生成する。
+- エージェント識別情報サインインログで条件付きアクセスポリシー評価を調査する。
 
 ---
 
-## Exercise 1: Create Custom Security Attributes for Agent Governance
+## ラボ所要時間
 
-### Task 1: Assign the Attribute Definition Administrator Role
+推定所要時間：**30分**
 
-1. Open a browser and navigate to **Microsoft Entra admin center** using the below URL. Sign in with **ODL User** credentials if prompted. Under **Entra ID**, select **Roles & admins**.
+---
+
+## 演習 1: エージェントガバナンスのためのカスタムセキュリティ属性を作成する
+
+### タスク 1: 属性定義管理者ロールを割り当てる
+
+1. ブラウザを開き、以下の URL を使用して Microsoft Entra 管理センターに移動します。プロンプトが表示された場合は **ODL User** 認証情報を使用してサインインします。**[Entra ID]** の下で、**[ロールと管理者]** を選択します。
 
     ```
     https://entra.microsoft.com
@@ -41,419 +41,426 @@ Estimated time: **30 minutes**
 
 	![](./media/l03-e1-t1-s1.png)
 
-2. In the search bar, enter `Attribute Definition Administrator`.
+2. 検索バーに `Attribute Definition Administrator` と入力します。
 
 	![](./media/l03-e1-t1-s2.png)
-3. Select **Attribute Definition Administrator** by selecting its name.
+
+3. その名前を選択して **[属性定義管理者]** を選択します。
 
 	![](./media/l03-e1-t1-s3.png)
 
-4. On the **Attribute Definition Administrator** page, select **+ Add assignments**.
+4. **[属性定義管理者]** ページで、**[+ 割り当てを追加]** を選択します。
 
-5. On the **Add assignments** panel,Click on **0 member selected** and  select **ODL_User<inject key="Deployment ID" enableCopy="false"></inject>**. Click on **Next**.
+5. **[割り当てを追加]** パネルで、**[0メンバーが選択されています]** をクリックして、**ODL_User<inject key="Deployment ID" enableCopy="false"></inject>** を選択します。**[次へ]** をクリックします。
 
 	![](./media/l3e1t1s5.png)
 
-1. Select the assignemnt type as **Active** , make sure **Permanently assigned** is enabled and enter **Active** in the Justification field.
+1. 割り当てタイプを **[アクティブ]** として選択し、**[永続的に割り当て]** が有効になっていることを確認し、正当化フィールドに **[アクティブ]** と入力します。
 
 	![](./media/l3e1t1s6.png)
    
-11. Confirm the assignment appears in the list.
+11. 割り当てがリストに表示されていることを確認します。
 
 	![](./media/ex3-2.png)
 
-12. Navigate back to **Roles & admins**.
+12. **[ロールと管理者]** に戻ります。
 
-13. In the search bar, enter `Attribute Assignment Administrator` and repeat the steps to assign the role to **ODL_User<inject key="Deployment ID" enableCopy="false"></inject>**.
+13. 検索バーに `Attribute Assignment Administrator` と入力し、ステップを繰り返して、**ODL_User<inject key="Deployment ID" enableCopy="false"></inject>** にロールを割り当てます。
 
 	![](./media/ex3-3.png)
 
 ---
 
-### Task 2: Create the AgentAttributes Attribute Set
+### タスク 2: AgentAttributes 属性セットを作成する
 
-1. In the left navigation pane, expand **Entra ID** and select **Custom security attributes**. On the **Custom security attributes** page, select **+ Add attribute set**.
+1. 左側のナビゲーションペインで、**[Entra ID]** を展開し、**[カスタムセキュリティ属性]** を選択します。**[カスタムセキュリティ属性]** ページで、**[+ 属性セットを追加]** を選択します。
 
 	![](./media/l03-e1-t2-s2.png)
 
-3. On the **Add attribute set** panel, add the following and click on **Add**:
-   - In the **Attribute set name** field, enter `AgentAttributes`.
-   - In the **Description** field, enter `Attribute set for classifying AI agent approval and governance status`.
-   - In the **Maximum number of attributes** field, leave the default value.
+3. **[属性セットを追加]** パネルで、以下を追加して、**[追加]** をクリックします。
+   - **[属性セット名]** フィールドに、`AgentAttributes` と入力します。
+   - **[説明]** フィールドに、`AI エージェント承認およびガバナンスステータスを分類するための属性セット。` と入力します。
+   - **[最大属性数]** フィールドでは、デフォルト値のままにしておきます。
 
 	![](./media/l3e1t2s2.png)
 
-7. Confirm that **AgentAttributes** appears in the attribute set list.
+7. **[AgentAttributes]** が属性セットリストに表示されていることを確認します。
 
 	![](./media/l03-e1-t2-s7.png)
 
 ---
 
-### Task 3: Create the AgentApprovalStatus Attribute
+### タスク 3: AgentApprovalStatus 属性を作成する
 
-1. On the **Custom security attributes** page, select **AgentAttributes** to open the attribute set.
+1. **[カスタムセキュリティ属性]** ページで、**[AgentAttributes]** を選択して属性セットを開きます。
 
 	![](./media/l03-e1-t3-s1.png)
 
-2. On the **AgentAttributes** page, select **+ Add attribute**.
+2. **[AgentAttributes]** ページで、**[+ 属性を追加]** を選択します。
 
 	![](./media/l03-e1-t3-s2.png)
 
-3. On the **Add attribute** panel, configure the following fields:
+3. **[属性を追加]** パネルで、以下のフィールドを構成します。
 
-   - **Attribute name:** Enter `AgentApprovalStatus`.
-   - **Description:** Enter `Tracks the approval status of each AI agent identity in the Zava governance review process.`
-   - **Data type:** Select **String**.
-   - **Allow multiple values to be assigned:** Select **Yes**.
-   - **Only allow predefined values to be assigned:** Select **Yes**.
+   - **属性名:** `AgentApprovalStatus` と入力します。
+   - **説明:** `Zava ガバナンスレビュープロセスにおける各 AI エージェント識別情報の承認ステータスを追跡します。` と入力します。
+   - **データ型:** **[文字列]** を選択します。
+   - **複数の値を割り当てることができます:** **[はい]** を選択します。
+   - **定義済みの値のみを割り当てることができます:** **[はい]** を選択します。
 
-4. Under **Predefined values**, select **+ Add value**.
+4. **[定義済みの値]** で、**[+ 値を追加]** を選択します。
 
 	![](./media/l03-e1-t3-s4.png)
 
-5. In the value field, enter `New`. Then, select **Add**.
+5. 値フィールドに `New` と入力します。その後、**[追加]** を選択します。
 
 	![](./media/l03-e1-t3-s5.png)
 
-6. Select **+ Add value**.
+6. **[+ 値を追加]** を選択します。
 
 	![](./media/l03-e1-t3-s6.png)
 
-7. In the value field, enter `In_Review`. Then select **Add**.
+7. 値フィールドに `In_Review` と入力します。その後、**[追加]** を選択します。
 
 	![](./media/l03-e1-t3-s7.png)
 
-8. Select **+ Add value**.
+8. **[+ 値を追加]** を選択します。
 
 	![](./media/l03-e1-t3-s8.png)
 
-9. In the value field, enter `HR_Approved`. Then select **Add**.
+9. 値フィールドに `HR_Approved` と入力します。その後、**[追加]** を選択します。
 
 	![](./media/l03-e1-t3-s9.png)
 
-10. Select **+ Add value**.
+10. **[+ 値を追加]** を選択します。
 
 	![](./media/l03-e1-t3-s10.png)
 
-11. In the value field, enter `Finance_Approved`. Then select **Add**.
+11. 値フィールドに `Finance_Approved` と入力します。その後、**[追加]** を選択します。
 
 	![](./media/l03-e1-t3-s11.png)
 
-12. Select **+ Add value**.
+12. **[+ 値を追加]** を選択します。
 
 	![](./media/l03-e1-t3-s12.png)
 
-13. In the value field, enter `IT_Approved`. Then select **Add**.
+13. 値フィールドに `IT_Approved` と入力します。その後、**[追加]** を選択します。
 
 	![](./media/l03-e1-t3-s13.png)
-14. Select **Save**.
+
+14. **[保存]** を選択します。
 
 	![](./media/l03-e1-t3-s14.png)
 
-15. Confirm that **AgentApprovalStatus** appears in the attributes list under **AgentAttributes**.
+15. **[AgentApprovalStatus]** が **[AgentAttributes]** の下の属性リストに表示されていることを確認します。
 
 	![](./media/l03-e1-t3-s15.png)
 
 ---
 
-### Task 4: Assign HR_Approved to the Zava HR Assistant
+### タスク 4: Zava HR Assistant に HR_Approved を割り当てる
 
-1. In the left navigation pane, select **Agents**.
+1. 左側のナビゲーションペインで、**[エージェント]** を選択します。
 
 	![](./media/l03-e1-t4-s1.png)
 
-2. On the **Agent identities** page, select **Zava HR Assistant (Microsoft Copilot Studio)**.
+2. **[エージェント識別情報]** ページで、**[Zava HR Assistant (Microsoft Copilot Studio)]** を選択します。
 
 	![](./media/l03-e1-t4-s2.png)
 
-3. On the **Overview** page, in the left sub-navigation, select **Custom security attributes**.
+3. **[概要]** ページで、左側のサブナビゲーションで、**[カスタムセキュリティ属性]** を選択します。
 
 	![](./media/l03-e1-t4-s3.png)
 
-4. On the **Custom security attributes** page, select **+ Add assignment**.
+4. **[カスタムセキュリティ属性]** ページで、**[+ 割り当てを追加]** を選択します。
 
 	![](./media/l03-e1-t4-s4.png)
 
-5. On the **Add custom security attribute assignment** panel, configure the following:
+5. **[カスタムセキュリティ属性割り当てを追加]** パネルで、以下を構成します。
 
-   - **Attribute set:** Select **AgentAttributes**.
-   - **Attribute name:** Select **AgentApprovalStatus**.
-   - **Assigned values:** Select **Add value** > **HR_Approved** and select **Save**.
+   - **属性セット:** **[AgentAttributes]** を選択します。
+   - **属性名:** **[AgentApprovalStatus]** を選択します。
+   - **割り当てられた値:** **[値を追加]** > **[HR_Approved]** を選択して、**[保存]** を選択します。
 
 		![](./media/l03-e1-t4-s5.png)
 
 		![](./media/l03-e1-t4-s6.png)
 
-6. Select **Save** to apply the assignment.
+6. **[保存]** を選択して割り当てを適用します。
 
 	![](./media/l03-e1-t4-s6.1.png)
 
-7. Confirm that **AgentApprovalStatus** appears with the value **HR_Approved** on the custom security attributes page.
+7. **[AgentApprovalStatus]** が **[HR_Approved]** の値でカスタムセキュリティ属性ページに表示されることを確認します。
 
-8. Similarly assign the following attributes to respective agents.
+8. 同様に、以下の属性を各エージェントに割り当てます。
 
    - **Zava Finance Agent (Microsoft Copilot Studio)**: New
    - **Zava IT Support Agent (Microsoft Copilot Studio)**: New
+
 ---
 
-## Exercise 2: Create a Conditional Access Policy to Block Unapproved Agent Identities
+## 演習 2: 未承認のエージェント識別情報をブロックする条件付きアクセスポリシーを作成する
 
-### Task 1: Create the Policy and Configure Assignments
+### タスク 1: ポリシーを作成し、割り当てを構成する
 
-1. In the left navigation pane of the Microsoft Entra admin center, expand **Entra ID**, then select **Conditional Access**.
+1. Microsoft Entra 管理センターの左側のナビゲーションペインで、**[Entra ID]** を展開してから、**[条件付きアクセス]** を選択します。
 
-2. On the **Conditional Access** page, select **Policies**.
+2. **[条件付きアクセス]** ページで、**[ポリシー]** を選択します。
 
-3. On the **Policies** page, select **+ New policy**.
+3. **[ポリシー]** ページで、**[+ 新しいポリシー]** を選択します。
 
 	![](./media/l03-e2-t1-s3.png)
 
-4. On the **New Conditional Access policy** page, in the **Name** field, enter `Zava - Block Unapproved Agent Identities`.
+4. **[新しい条件付きアクセスポリシー]** ページで、**[名前]** フィールドに `Zava - Block Unapproved Agent Identities` と入力します。
 
-5. Under **Assignments**, select **0 users or agents (Preview) selected** under **Users or agents**.
+5. **[割り当て]** の下で、**[ユーザーまたはエージェント]** の下の **[0ユーザーまたはエージェント(プレビュー)が選択されています]** を選択します。
 
-6. On the assignments panel, under **What does this policy apply to?**, select **Agents**.
+6. 割り当てパネルで、**[このポリシーは何に適用されますか?]** の下で、**[エージェント]** を選択します。
 
-7. Under **Include**, select **All agent identities (Preview)**.
+7. **[含める]** の下で、**[すべてのエージェント識別情報(プレビュー)]** を選択します。
 
 	![](./media/ex3-7.png)
 
-8. Under **Exclude**, click on **None** under **Select agent identities based on attributes**.
+8. **[除外]** で、**[属性に基づいてエージェント識別情報を選択]** の下の **[なし]** をクリックします。
 
 	![](./media/l03-e2-t1-s8.png)
 
-9. Set **Configure** to **Yes**.
+9. **[構成]** を **[はい]** に設定します。
 
 	![](./media/l03-e2-t1-s9.png)
 
-10. In the expression configuration, under **Attribute**, select the attribute **AgentApprovalStatus**. Set **Operator** to **Contains**. Set **Value** to **HR_Approved**.Select **Done** to confirm the exclusion configuration.
+10. 式構成で、**[属性]** の下で、属性 **[AgentApprovalStatus]** を選択します。**[演算子]** を **[含む]** に設定します。**[値]** を **[HR_Approved]** に設定します。**[完了]** を選択して除外構成を確認します。
 
 	![](./media/l03-e2-t1-s11.png)
 
-1. Under **Exclude**, click on **None** under **Select individual agent identities**.
+1. **[除外]** で、**[個別のエージェント識別情報を選択]** の下の **[なし]** をクリックします。
 
 	![](./media/n1.png)
 
-1. Select **HR agent (1)** and click on **Select (2)** 
+1. **[HRエージェント(1)]** を選択して、**[選択(2)]** をクリックします。
 
 	![](./media/n2.png)
 
-12. Under **Target resources**, select **No target resources selected**.
+12. **[ターゲットリソース]** で、**[ターゲットリソースが選択されていません]** を選択します。
 
 	![](./media/l03-e2-t1-s12.png)
 
-13. Under **Include**, select **All resources (formerly 'All cloud apps')**.
+13. **[含める]** の下で、**[すべてのリソース(旧称「すべてのクラウドアプリ」)]** を選択します。
 
 	![](./media/l03-e2-t1-s13.png)
 
-15. Under **Access controls**, on the **Grant** panel, confirm that **Block access** is selected.
+15. **[アクセス制御]** の下で、**[付与]** パネルで、**[アクセスをブロック]** が選択されていることを確認します。
 
 	![](./media/l3e2t1s13.png)
 
-16. For **Enable policy**, keep **Report-only**.
+16. **[ポリシーを有効にする]** で、**[レポートのみ]** のままにします。
 
-17. Select **Create** to save the policy.
+17. **[作成]** を選択してポリシーを保存します。
 
 	![](./media/l03-e2-t1-s15.png)
+
 ---
 
-### Task 2: Validate the Policy Using the What If Tool
+### タスク 2: Whatif ツールを使用してポリシーを検証する
 
-1. On the policy page, select **What If** to open the Report-only impact view.
+1. ポリシーページで、**[What If]** を選択してレポートのみの影響ビューを開きます。
 
-   > **Note:** The What If tool allows you to simulate whether a specific identity would be affected by this policy without enforcing it.
+   > **注記:** Whatif ツールを使用すると、特定の識別情報がこのポリシーによって影響を受けるかどうかをシミュレートでき、強制することなく影響を確認できます。
 
 	![](./media/l03-e2-t2-s1.png)
 
-2. On the **What If** panel, under **Select identity type**, select **Agent identities (Preview)**.
+2. **[What If]** パネルで、**[識別情報タイプを選択]** の下で、**[エージェント識別情報(プレビュー)]** を選択します。
 
 	![](./media/l03-e2-t2-s2.png)
 
-2. Select **Edit agent identity**.
+2. **[エージェント識別情報を編集]** を選択します。
 
 	![](./media/l03-e2-t2-s3.png)
 
-3. In the agent identity search field, search for and select **Zava Finance Agent (Microsoft Copilot Studio)**.
+3. エージェント識別情報検索フィールドで、**[Zava Finance Agent (Microsoft Copilot Studio)]** を検索して選択します。
 
 	![](./media/l03-e2-t2-s4.png)
 
-4. Under **Target resource**, set **Select target type** to **Cloud apps**. Select **+ Select cloud app**.
+4. **[ターゲットリソース]** で、**[ターゲットタイプを選択]** を **[クラウドアプリ]** に設定します。**[+ クラウドアプリを選択]** を選択します。
 
 	![](./media/l3e2t1s5.png)
 
-5. In the search field, enter `Office 365 SharePoint Online`. Select **Office 365 SharePoint Online** from the results. Choose **Select** to confirm.
+5. 検索フィールドに `Office 365 SharePoint Online` と入力します。結果から **[Office 365 SharePoint Online]** を選択します。**[選択]** を選択して確認します。
 
 	![](./media/l03-e2-t2-s6.png)
 
-6. Select **What if** to run the simulation.
+6. **[What If]** を選択してシミュレーションを実行します。
 
 	![](./media/l03-e2-t2-s7.png)
 
-7. Review the results and confirm that the policy **Zava - Block Unapproved Agent Identities** shows as **Applied** — because the Zava Finance Agent is NOT excluded by the `HR_Approved` attribute.
+7. 結果をレビューし、ポリシー **[Zava - Block Unapproved Agent Identities]** が **[適用済み]** と表示されていることを確認します。これは Zava Finance Agent が `HR_Approved` 属性で除外されていないためです。
 
 	![](./media/l03-e2-t2-s8.png)
 
-8. Return to the **Edit agent identity** link and change the agent to **Zava HR Assistant**.
+8. **[エージェント識別情報を編集]** リンクに戻り、エージェントを **[Zava HR Assistant]** に変更します。
 
 	![](./media/l03-e2-t2-s9.png)
 
 	![](./media/l03-e2-t2-s9.1.png)
 
-8. Select **What if** to run the simulation.
+8. **[What If]** を選択してシミュレーションを実行します。
 
 	![](./media/l03-e2-t2-s10.png)
 
-9. Review the results and confirm that the policy **Zava - Block Unapproved Agent Identities** shows as **Not applied** — because the Zava HR Assistant is excluded by the `HR_Approved` attribute.
+9. 結果をレビューし、ポリシー **[Zava - Block Unapproved Agent Identities]** が **[適用されない]** と表示されていることを確認します。これは Zava HR Assistant が `HR_Approved` 属性で除外されているためです。
 
 	![](./media/l03-e2-t2-s11.png)
 
-10. Select **Close** to exit the What If panel.
+10. **[閉じる]** を選択して What If パネルを終了します。
 
 ---
 
-### Task 3: Switch the Policy to Enforcement Mode 
+### タスク 3: ポリシーを強制モードに切り替える
 
-1. Navigate back to **Policies** and click on **Zava - Block Unapproved Agent Identities**
+1. **[ポリシー]** に戻り、**[Zava - Block Unapproved Agent Identities]** をクリックします。
 
 	![](./media/ex3-4.png)
 
-2. Under **Enable policy**, select **On**.
+2. **[ポリシーを有効にする]** で、**[オン]** を選択します。
 
-3. Select **Save** to apply the change.
+3. **[保存]** を選択して変更を適用します。
 
-4. On the **Policies** page, confirm that **Zava - Block Unapproved Agent Identities** shows a status of **On**.
+4. **[ポリシー]** ページで、**[Zava - Block Unapproved Agent Identities]** が **[オン]** のステータスを表示していることを確認します。
 
 	![](./media/l03-e2-t3-s1.png)
 
-	>**Note:** If you receive the error “Security defaults must be disabled to enable Conditional Access policy”, click on Disable security defaults and turn off the Security Defaults option. Once disabled, proceed with enabling the Conditional Access policy.
+	>**注記:** 「条件付きアクセスポリシーを有効にするにはセキュリティ既定値を無効にする必要があります」というエラーが表示される場合は、セキュリティ既定値を無効にしてセキュリティ既定値オプションをオフにしてください。無効化したら、条件付きアクセスポリシーの有効化を進めてください。
+
 	![](./media/l03-e2-t3-s4.png)
+
 ---
 
-## Exercise 3: Create a Conditional Access Policy to Block High-Risk Agent Identities
+## 演習 3: 危険度が高いエージェント識別情報をブロックする条件付きアクセスポリシーを作成する
 
-### Task 1: Create the Policy and Configure Assignments
+### タスク 1: ポリシーを作成し、割り当てを構成する
 
-1. On the **Conditional Access** page, select **+ New policy**.
+1. **[条件付きアクセス]** ページで、**[+ 新しいポリシー]** を選択します。
 
 	![](./media/ex3-5.png)
 
-2. In the **Name** field, enter `Zava - Block High Risk Agent Identities`.
+2. **[名前]** フィールドに `Zava - Block High Risk Agent Identities` と入力します。
 
-3. Under **Assignments**, select **0 users or agents (Preview) selected** under **Users or agents**.
+3. **[割り当て]** の下で、**[ユーザーまたはエージェント]** の下の **[0ユーザーまたはエージェント(プレビュー)が選択されています]** を選択します。
 
 	![](./media/l03-e3-t3-s2.png)
 
-4. Under **What does this policy apply to?**, select **Agents**.
+4. **[このポリシーは何に適用されますか?]** の下で、**[エージェント]** を選択します。
 
-5. Under **Include**, select **All agent identities (Preview)**.
+5. **[含める]** の下で、**[すべてのエージェント識別情報(プレビュー)]** を選択します。
 
 	![](./media/ex3-6.png)
 
-6. Under **Target resources**, select **No target resources selected**, then select **All resources (formerly 'All cloud apps')**.
+6. **[ターゲットリソース]** で、**[ターゲットリソースが選択されていません]** を選択してから、**[すべてのリソース(旧称「すべてのクラウドアプリ」)]** を選択します。
 
 	![](./media/l03-e3-t3-s6.png)
 
-7. Under **Conditions**, select **0 Conditions selected**. Then select **Not Configured** under **Agent Risk**.
+7. **[条件]** で、**[0条件が選択されています]** を選択します。その後、**[エージェントリスク]** の下で **[未構成]** を選択します。
 
 	![](./media/l3e3t1s7.png)
 
-8. On the **Agent risk** panel, set **Configure** to **Yes**. Under **Configure agent risk levels needed for policy to be enforced**, select **High**. Select **Done** to confirm the condition.
+8. **[エージェントリスク]** パネルで、**[構成]** を **[はい]** に設定します。**[ポリシーが適用されるために必要なエージェントリスクレベルを構成]** の下で、**[高]** を選択します。**[完了]** を選択して条件を確認します。
 
 	![](./media/l03-e3-t3-s8.png)
 
-9. Under **Access controls**, under **Grant**, make sure that **Block access** is selected.
+9. **[アクセス制御]** の下で、**[付与]** の下で、**[アクセスをブロック]** が選択されていることを確認します。
 
 	![](./media/l3e3t1s9.png)
 
-10. Under **Enable policy**, select **Report-only**.
+10. **[ポリシーを有効にする]** で、**[レポートのみ]** を選択します。
 
-    > **Note:** This policy is set to Report-only because agent risk signals from Entra ID Protection require active agent usage over time before risk levels are generated. In a newly provisioned lab environment, no risk signals will be present yet. Report-only mode allows the policy to be evaluated against future sign-in events without blocking access prematurely. In a production environment, this policy would be switched to On once baseline risk signal data is established.
+    > **注記:** このポリシーはレポートのみに設定されています。Entra ID Protection からのエージェントリスク信号は、リスクレベルが生成される前にアクティブなエージェント使用が時間をかけて必要だためです。新しくプロビジョニングされたラボ環境では、リスク信号はまだ存在しません。レポートのみモードにより、ポリシーを評価して将来のサインインイベントに対して、アクセスをブロックする前に評価できます。本番環境では、このポリシーはベースラインリスク信号データが確立されたら、オンに切り替えられます。
 
-11. Select **Create** to save the policy.
+11. **[作成]** を選択してポリシーを保存します。
 
 	![](./media/l03-e3-t3-s10.png)
 
-12. On the **Policies** page, confirm that **Zava - Block High Risk Agent Identities** appears with a status of **Report-only**.
+12. **[ポリシー]** ページで、**[Zava - Block High Risk Agent Identities]** が **[レポートのみ]** のステータスで表示されていることを確認します。
 
 ---
 
-## Exercise 4: Generate Agent Sign-In Events and Investigate Conditional Access Policy Evaluation
+## 演習 4: エージェントサインインイベントを生成し、条件付きアクセスポリシー評価を調査する
 
-### Task 1: Invoke the Zava HR Assistant
+### タスク 1: Zava HR Assistant を呼び出す
 
-1. Open a new **InPrivate** or **Incognito** browser window.
+1. 新しい **InPrivate** または **Incognito** ブラウザウィンドウを開きます。
 
-2. Navigate to Copilot studio using the below URL.
+2. 以下のURLを使用して Copilot studio に移動します。
 
     ```
     https://copilot.microsoft.com
 	```
 
-3. Sign in with **Patti Fernandes** credentials from the **Resources** tab. (You can use **<inject key="User 02 UPN"></inject>** as your ID and Use the User Password from the Resources tab Uae the in the Temporary Acess Pass .)
+3. **[リソース]** タブからの **Patti Fernandes** 認証情報を使用してサインインします。(ユーザーIDとして **<inject key="User 02 UPN"></inject>** を使用でき、リソースタブから一時アクセスパスのユーザーパスワードを使用します。)
 
-4. In the Microsoft 365 Copilot chat interface, select **All agents** from the navigation. Search for and select **Zava HR Assistant**.
+4. Microsoft 365 Copilot チャットインターフェースで、ナビゲーションから **[すべてのエージェント]** を選択します。**[Zava HR Assistant]** を検索して選択します。
 
 	![](./media/l03-e4-t1-s4.png)
 
-5. Then select **Add**.
+5. その後、**[追加]** を選択します。
 
 	![](./media/l03-e4-t1-s5.png)
 
-6. In the chat input field, enter the following:
+6. チャット入力フィールドに、以下を入力します。
 
-   ```
-   What is Zava's leave policy?
-   ```
+ ```
+Zava の休暇ポリシーは何ですか?
+ ```
 
-7. Wait for the Zava HR Assistant to respond.
+7. Zava HR Assistant が応答するのを待ちます。
 
-	![](./media/l03-e4-t1-s7.png)
-8. Enter a second message in the chat input field:
+ ![](./media/l03-e4-t1-s7.png)
 
-   ```
-   How do I submit a sick leave request?
-   ```
+8. チャット入力フィールドに2番目のメッセージを入力します。
 
-9. Wait for the response.
+ ```
+病気休暇をリクエストするにはどうすればよいですか?
+ ```
 
-	![](./media/l03-e4-t1-s8.png)
+9. 応答を待ちます。
 
-   > **Note:** These interactions generate agent sign-in events as the Zava HR Assistant authenticates to access its SharePoint knowledge source. These events will appear in the Entra sign-in logs and will have Conditional Access policy evaluation recorded against them.
+ ![](./media/l03-e4-t1-s8.png)
 
-10. Close the InPrivate browser window.
+> **注記:** これらのインタラクションにより、Zava HR Assistant が識別情報が SharePoint ナレッジソースにアクセスするために認証されるため、エージェントサインインイベントが生成されます。これらのイベントは Entra サインインログに表示され、それらに対して条件付きアクセスポリシー評価が記録されます。
 
----
-
-### Task 2: Investigate Agent Sign-In Logs in Entra
-
-1. Return to the **ODL User** browser session at Microsoft Entra admin center 
-
-    ```
-    https://entra.microsoft.com
-	```
-
-2. In the left navigation pane, expand **Entra ID** and Select **Sign-in logs** under **Monitoring & health**.
-
-	![](./media/l03-e4-t2-s2.png)
-
-3. On the **Sign-in logs** page, select the **Service principal sign-ins** tab.
-
-	![](./media/l03-e4-t2-s3.png)
-
-4. In the filter bar, select **+ Add filters**. Select **Is Agent** as the filter field.
-
-	![](./media/l03-e4-t2-s4.png)
-
-5.  Select **Yes** and then click **Apply** to apply the filter.
-
-	![](./media/l03-e4-t2-s5.png)
-
-6. Review the sign-in entries returned in the filtered view.
-
-	![](./media/l03-e4-t2-s6.png)
+10. InPrivate ブラウザウィンドウを閉じます。
 
 ---
 
-## Summary
+### タスク 2: Entraのエージェントサインインログを調査する
 
-In this lab, you created a custom security attribute set named **AgentAttributes** with an **AgentApprovalStatus** attribute containing five predefined governance values. You assigned the **HR_Approved** approval status to the Zava HR Assistant, establishing a structured agent classification model in Entra ID. You created the **Zava - Block Unapproved Agent Identities** Conditional Access policy targeting all agent identities and excluding those with approved attribute values. You used the What If tool in Report-only mode to validate that an approved agent is correctly excluded from the block policy, then switched the policy to enforcement mode. You created the **Zava - Block High Risk Agent Identities** policy using Entra ID Protection agent risk signals and set it to Report-only pending risk signal generation. Patti Fernandes invoked the Zava HR Assistant to generate sign-in events, which you then investigated in the Service principal sign-in logs filtered by agent type. Zava's agent identities are now governed by Zero Trust Conditional Access controls.
+1. Microsoft Entra 管理センターの **ODL User** ブラウザセッションに戻ります。
+
+ ```
+ https://entra.microsoft.com
+ ```
+
+2. 左側のナビゲーションペインで、**[Entra ID]** を展開して、**[監視と健全性]** の下から **[サインインログ]** を選択します。
+
+ ![](./media/l03-e4-t2-s2.png)
+
+3. **[サインインログ]** ページで、**[サービスプリンシパルサインイン]** タブを選択します。
+
+ ![](./media/l03-e4-t2-s3.png)
+
+4. フィルタバーで、**[+ フィルタを追加]** を選択します。フィルタフィールドとして **[Is Agent]** を選択します。
+
+ ![](./media/l03-e4-t2-s4.png)
+
+5. **[はい]** を選択してから、**[適用]** をクリックしてフィルタを適用します。
+
+ ![](./media/l03-e4-t2-s5.png)
+
+6. フィルタビューで返されたサインインエントリをレビューします。
+
+ ![](./media/l03-e4-t2-s6.png)
+
+---
+
+## まとめ
+
+このラボでは、5つの定義済みガバナンス値を含む **[AgentApprovalStatus]** 属性を持つ **[AgentAttributes]** という名前のカスタムセキュリティ属性セットを作成しました。Zava HR Assistant に **[HR_Approved]** 承認ステータスを割り当てて、Entra ID に構造化されたエージェント分類モデルを確立しました。すべてのエージェント識別情報を対象とし、承認された属性値を持つものを除外する **[Zava - Block Unapproved Agent Identities]** 条件付きアクセスポリシーを作成しました。レポートのみモードでWhatifツールを使用して、承認されたエージェントがブロックポリシーから正しく除外されることを検証してから、ポリシーを強制モードに切り替えました。Entra ID Protection エージェントリスク信号を使用して **[Zava - Block High Risk Agent Identities]** ポリシーを作成し、リスク信号生成を待機するためにレポートのみに設定しました。Patti Fernandes が Zava HR Assistant を呼び出してサインインイベントを生成し、エージェントタイプでフィルタされたサービスプリンシパルサインインログでそれらを調査しました。Zava のエージェント識別情報は Zero Trust 条件付きアクセス制御でガバナンスされるようになりました
