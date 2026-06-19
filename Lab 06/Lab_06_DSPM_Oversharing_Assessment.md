@@ -1,88 +1,88 @@
-# Lab 06: DSPM — Oversharing Assessment and Remediation
+# ラボ 06: DSPM — オーバーシェアリング評価と修復
 
-## Introduction
+## はじめに
 
-Microsoft Purview Data Security Posture Management is the unified front door for discovering, protecting, and investigating sensitive data risks across Zava's digital estate — including AI apps, agents, SharePoint sites, and user interactions. Unlike the classic DSPM for AI experience, the new DSPM combines traditional data security posture with AI observability into a single solution, organised around outcome-based security objectives.
+Microsoft Purview Data Security Posture Management は、Zava のデジタル資産全体にわたる機密データのリスクの発見、保護、調査のための統一されたプラットフォームです。AI アプリ、エージェント、SharePoint サイト、ユーザーインタラクションが含まれます。従来の DSPM for AI エクスペリエンスと異なり、新しい DSPM は従来のデータセキュリティ体勢と AI 可観測性を結果ベースのセキュリティ目的の周りに組織された単一のソリューションに統合します。
 
-In this lab, the data risk assessment scan is initiated at the very start of Day 3 before any other work begins, so results are available by the time learners reach Exercise 4. Signal generation exercises create realistic Copilot interaction events referencing sensitive Zava files. You and Patti Fernandes then use DSPM Objectives, one-click policies, assessment results, and the Activity Explorer to investigate and remediate oversharing risks across the Zava agent environment.
-
----
-
-## Scenario
-
-Zava's CISO has received a concern from the compliance team: the HR Assistant and Finance Agent may be surfacing sensitive employee and financial records to users who should not have access to that data. The security team needs to understand the full scope of data exposure, activate posture management policies, and apply remediation controls before the end of Day 3.
-
-You will launch a custom data risk assessment against the Zava HR and Finance SharePoint sites, activate DSPM one-click policies, and use the Objectives dashboard to drive remediation. Adele Vance will generate realistic Copilot interaction signals referencing sensitive labelled files. Patti Fernandes will investigate the AI activities in DSPM Activity Explorer and review the oversharing findings from the assessment.
+このラボでは、データリスク評価スキャンが 3 日目の最初に開始され、他の作業が始まる前に実施されます。その結果は、ラーナーがエクササイズ 4 に到達するまでに利用可能になります。シグナル生成エクササイズでは、Zava ファイルを参照する現実的な Copilot インタラクションイベントを作成します。その後、DSPM オブジェクティブ、ワンクリックポリシー、評価結果、およびアクティビティエクスプローラーを使用して、Zava エージェント環境全体のオーバーシェアリングリスクを調査および修復します。
 
 ---
 
-## Objectives
+## シナリオ
 
-- Initiate a custom DSPM data risk assessment against Zava HR and Finance SharePoint sites at the start of Day 3.
-- Generate realistic Microsoft 365 Copilot interaction signals referencing sensitive labelled files as Adele Vance.
-- Navigate the new DSPM experience and review the Posture dashboard.
-- Activate DSPM one-click policies for risky AI usage detection and sensitive data protection.
-- Review DSPM Objectives for oversharing and Copilot data exposure.
-- Review data risk assessment results and apply remediation actions.
-- Investigate Zava agent activity and sensitive data access in the Apps and agents dashboard.
-- Review AI interaction events in Activity Explorer filtered to Adele Vance.
-- Apply SharePoint Restricted Content Discovery to the Zava HR site.
+Zava の CISO がコンプライアンスチームからの懸念を受けました。HR Assistant と Finance Agent が、アクセス権を持たないユーザーに対して機密従業員記録と財務記録を表示している可能性があります。セキュリティチームは、データ露出の完全な範囲を理解し、体勢管理ポリシーを有効化し、3 日目終了までに修復コントロールを適用する必要があります。
+
+Zava HR と Finance SharePoint サイトに対してカスタムデータリスク評価を実行し、DSPM ワンクリックポリシーを有効化し、オブジェクティブダッシュボードを使用して修復を推進します。Adele Vance が、機密ラベル付きファイルを参照する現実的な Copilot インタラクションシグナルを生成します。Patti Fernandes が DSPM アクティビティエクスプローラーで AI アクティビティを調査し、オーバーシェアリング検出結果をレビューします。
 
 ---
 
-## Lab Duration
+## 目的
 
-Estimated time: **25 minutes**
+- 3 日目の開始時に、Zava HR および Finance SharePoint サイトに対するカスタム DSPM データリスク評価を実行する。
+- 機密ラベル付きファイルを参照する現実的な Microsoft 365 Copilot インタラクションシグナルを Adele Vance として生成する。
+- 新しい DSPM エクスペリエンスをナビゲートし、体勢ダッシュボードをレビューする。
+- DSPM ワンクリックポリシーをリスクの高い AI 使用検出と機密データ保護のために有効化する。
+- オーバーシェアリングと Copilot データ露出に関する DSPM オブジェクティブをレビューする。
+- データリスク評価結果をレビューし、修復アクションを適用する。
+- Zava エージェントアクティビティと機密データアクセスを Apps and agents ダッシュボードで調査する。
+- Adele Vance にフィルタリングされた AI インタラクションイベントをアクティビティエクスプローラーでレビューする。
+- SharePoint Restricted Content Discovery を Zava HR サイトに適用する。
 
 ---
 
-> ⚠️ **IMPORTANT — Complete Task 1 of Exercise 1 before anything else on Day 3.**
-> The data risk assessment scan can take 30–60 minutes to complete. It must be started first so results are available when you reach Exercise 4. Do not proceed to Exercise 2 until Task 1 of Exercise 1 is complete.
+## ラボ所要時間
+
+推定時間: **25 分**
 
 ---
 
-## Exercise 1: Initiate the Data Risk Assessment
+> ⚠️ **重要 — 3 日目に他の作業を行う前に、エクササイズ 1 のタスク 1 を完了してください。**
+> データリスク評価スキャンは 30～60 分かかることがあります。選択した SharePoint サイト内のアイテム数によって異なります。エクササイズ 4 に到達するまでに結果が利用可能になるように、最初に開始する必要があります。エクササイズ 1 のタスク 1 が完了するまで、エクササイズ 2 に進まないでください。
 
-### Task 1: Register an Entra App
+---
 
-1. Navigate to **Entra admin center** using the below URL and Sign in with **ODL User** credentials if prompted.
+## エクササイズ 1: データリスク評価を実行する
+
+### タスク 1: Entra アプリを登録する
+
+1. 以下の URL を使用して **Entra 管理センター** にナビゲートし、プロンプトが表示される場合は **ODL ユーザー** の認証情報でサインインします。
 
     ```
     https://entra.microsoft.com
     ```
 
-   - **Email/Username:** <inject key="AzureAdUserEmail"></inject>
-   - **Password:** <inject key="AzureAdUserPassword"></inject>
+   - **メール/ユーザー名:** <inject key="AzureAdUserEmail"></inject>
+   - **パスワード:** <inject key="AzureAdUserPassword"></inject>
 
-2. In the left navigation pane, select **+ New registration** from **App registrations**.
+2. 左ナビゲーションペインから、**アプリ登録** の **+ 新規登録** を選択します。
 
 	![](./media/l06-e1-t1-s2.png)
 
-3. Configure the following:
-   - **Name:** `Purview DSPM Item Level Scan`
-   - **Supported account types:** Select **Single tenant only**
+3. 以下のように構成します:
+   - **名前:** `Purview DSPM Item Level Scan`
+   - **サポートされているアカウントの種類:** **Single tenant only** を選択します
 
-4. Select **Register**.
+4. **登録** を選択します。
 
 	![](./media/l06-e1-t1-s4.png)
 
-5. On the app registration overview page, copy and note the **Application (client) ID**.
+5. アプリ登録の概要ページで、**アプリケーション (クライアント) ID** をコピーして記録します。
 
 	![](./media/l06-e1-t1-s5.png)
 
-6. In the left sub-navigation, Select **+ Add a permission** from **API permissions**.
+6. 左サブナビゲーションから、**API のアクセス許可** の **+ アクセス許可の追加** を選択します。
 
 	![](./media/l06-e1-t1-s6.png)
 
-7. Select **Microsoft Graph**.
+7. **Microsoft Graph** を選択します。
 
 	![](./media/l06-e1-t1-s7.png)
 
-8. Under Microsoft Graph , Select **Application permissions**.
+8. Microsoft Graph で、**アプリケーションのアクセス許可** を選択します。
 
 	![](./media/l06-e1-t1-s8.png)
 
-9. Search for and add the following permissions:
+9. 以下のアクセス許可を検索して追加します:
     - `Application.Read.All`
     - `Directory.Read.All`
     - `Files.ReadWrite.All`
@@ -91,388 +91,388 @@ Estimated time: **25 minutes**
     - `User.Read.All`
     - `SensitivityLabel.Read`
 
-10. Select **Add permissions**.
+10. **アクセス許可を追加** を選択します。
 
 	![](./media/l06-e1-t1-s10.png)
 
-11. Select **Grant admin consent** to give the permission consent.
+11. **管理者の同意を与える** を選択してアクセス許可同意を付与します。
 
 	![](./media/l06-e1-t1-s11.png)
 
-12. Select **Yes** to confirm.
+12. 確認するために **はい** を選択します。
 
 	![](./media/l06-e1-t1-s12.png)
 
-13. Navigate to **Certificates & secrets** and click **+ New client secret** , set expiry to **6 months** and select **Add**.
+13. **証明書とシークレット** にナビゲートして、**+ 新しいクライアント シークレット** をクリックし、有効期限を **6 か月** に設定して **追加** を選択します。
 
 	![](./media/l06-e1-t1-s13.png)
 
-14. Copy the **Value** from Client Secret.
+14. クライアント シークレットの **値** をコピーします。
 
 	![](./media/l06-e1-t1-s14.png)
 
-15. Save the values, as they can only be copied once and will be needed in the next task.
+15. これらの値を保存します。コピーできるのは一度だけであり、次のタスクで必要になります。
 
 ---
 
-### Task 2: Run a Custom Data Risk Assessment Against Zava SharePoint Sites
+### タスク 2: Zava SharePoint サイトに対するカスタムデータリスク評価を実行する
 
-1. Open a browser and navigate to **Microsoft Purview** portal using the below URL and Sign in with **ODL User** credentials if prompted.
+1. ブラウザーを開き、以下の URL を使用して **Microsoft Purview** ポータルにナビゲートし、プロンプトが表示される場合は **ODL ユーザー** の認証情報でサインインします。
 
     ```
     https://purview.microsoft.com
     ```
 
-   - **Email/Username:** <inject key="AzureAdUserEmail"></inject>
-   - **Password:** <inject key="AzureAdUserPassword"></inject>
+   - **メール/ユーザー名:** <inject key="AzureAdUserEmail"></inject>
+   - **パスワード:** <inject key="AzureAdUserPassword"></inject>
 
-2. In the left navigation pane, select **DSPM** from **Solutions**.
+2. 左ナビゲーションペインから、**ソリューション** の **DSPM** を選択します。
 
-   > **Note:** Do not select **DSPM for AI (classic)** or **Data Security Posture Management (classic)**. The new experience is labelled **DSPM** and is a separate entry in the Solutions menu.
+   > **注:** **DSPM for AI (classic)** または **Data Security Posture Management (classic)** を選択しないでください。新しいエクスペリエンスは **DSPM** というラベルが付いており、ソリューションメニューの別のエントリです。
 
 	![](./media/l06-e1-t2-s2.png)
 
-3. On the **DSPM** landing page, if prompted to complete initial setup tasks, select **Get started** and accept any required configuration to enable the solution. Allow the setup to complete before continuing.
+3. **DSPM** ランディングページで、初期セットアップタスクの完了を求めるプロンプトが表示される場合は、**はじめに** を選択し、必要な構成を受け入れてソリューションを有効化します。セットアップが完了するまで待ってから続行します。
 
-4. In the left sub-navigation, select **Data risk assessments** Under **Discover**
+4. 左サブナビゲーションから、**検出** の下の **データリスク評価** を選択します
 
 	![](./media/l06-e1-t2-s4.png)
 
-5. From the **Item-level scan not setup** notification, select **Setup connection**.
+5. **アイテムレベルスキャンがセットアップされていません** という通知から、**接続をセットアップ** を選択します。
 
 	![](./media/l06-e1-t2-s5.png)
 
-6. On the **Client Secret** tab, enter the **Application ID** and **Client secret (Value)** value copied in Task 1 step 14. Then select **Authenticate**. Once successful and click **Save**.
+6. **クライアント シークレット** タブで、タスク 1 ステップ 14 でコピーした **アプリケーション ID** と **クライアント シークレット (値)** を入力します。次に **認証** を選択します。成功したら **保存** をクリックします。
 
 	![](./media/l06-e1-t2-s6.png)
 
-7. On the **Data risk assessments** page, select **+ Create custom assessment**.
+7. **データリスク評価** ページで、**+ カスタム評価を作成** を選択します。
 
 	![](./media/l06-e1-t2-s7.png)
 
-8. On the **Basic details** panel, configure the following:
+8. **基本情報** パネルで、以下のように構成します:
 
-   - **Assessment name:** Enter `Zava SharePoint Oversharing Assessment`.
-   - **Description:** Enter `Custom assessment to identify potentially overshared sensitive items across Zava HR and Finance SharePoint sites.`
+   - **評価名:** `Zava SharePoint Oversharing Assessment` と入力します。
+   - **説明:** `Custom assessment to identify potentially overshared sensitive items across Zava HR and Finance SharePoint sites.` と入力します。
 
-9. Select **Next**.
+9. **次へ** を選択します。
 
 	![](./media/l06-e1-t2-s9.png)
 
-10. On the **Select scan level**, choose **Item-level** and make sure all checkbos are enabled.
+10. **スキャンレベルを選択** で、**アイテムレベル** を選択し、すべてのチェックボックスが有効になっていることを確認します。
 
 	![](./media/l06-e1-t2-s10.png)
 
-11. Select **Next** until you reach **Add data sources to assess** and select **Scope sites** , Next to **SharePoint**.
+11. **評価するデータソースを追加** に到達するまで **次へ** を選択し、**サイトをスコープ** を選択してから **SharePoint** に進みます。
 
 	![](./media/l06-e1-t2-s11.png)
 
-12. In the SharePoint site selector, click **Include** and select **From all sites**.
+12. SharePoint サイトセレクターで、**含める** をクリックして **すべてのサイトから** を選択します。
 
 	![](./media/l06-e1-t2-s12.png)
 
-13. Search for and select the following two sites:
+13. 以下の 2 つのサイトを検索して選択します:
 
     - **HR<inject key="Deployment ID" enableCopy="false"></inject>**
     - **Operations<inject key="Deployment ID" enableCopy="false"></inject>**
 
-14. Select **Done** to confirm the site selection.
+14. **完了** を選択してサイト選択を確認します。
 
 	![](./media/l06-e1-t2-s14.png)
 
 	![](./media/l06-e1-t2-s14.1.png)
 
-15. Make sure only **SharePoint** is enabled and click **Next**.
+15. **SharePoint** のみが有効になっていることを確認して **次へ** をクリックします。
 
 	![](./media/l06-e1-t2-s15.png)
 
-16. Select **Save and Run**.
+16. **保存して実行** を選択します。
 
 	![](./media/l06-e1-t2-s16.png)
 
-17. Click **Done**.
+17. **完了** をクリックします。
 
 	![](./media/l06-e1-t2-s17.png)
 
-18. Confirm that the assessment appears in the **Data risk assessments** list with a status of **In progress** or **Queued**.
+18. 評価が **データリスク評価** リストに表示され、ステータスが **進行中** または **キューに入っている** ことを確認します。
 
 	![](./media/l06-e1-t2-s18.png)
 
-    > **Note:** The assessment will take time to complete depending on the number of items in the selected SharePoint sites.
+    > **注:** 評価の完了には、選択した SharePoint サイト内のアイテム数に応じて時間がかかります。
 
 ---
 
-## Exercise 2: Generate Copilot Interaction Signals
+## エクササイズ 2: Copilot インタラクションシグナルを生成する
 
-In this exercise, Patti Fernandes generates realistic Microsoft 365 Copilot interaction events that reference sensitive labelled files across the Zava HR and Finance SharePoint sites. These interactions will surface in the DSPM Activity Explorer and audit logs, creating the investigation data used in Exercises 5 and Lab 07.
+このエクササイズでは、Patti Fernandes が Zava HR および Finance SharePoint サイト全体の機密ラベル付きファイルを参照する現実的な Microsoft 365 Copilot インタラクションイベントを生成します。これらのインタラクションは DSPM アクティビティエクスプローラーと監査ログに表示され、エクササイズ 5 およびラボ 07 で使用される調査データを作成します。
 
-### Task 1: Generate HR Data Interaction Signals as Adele Vance
+### タスク 1: Adele Vance として HR データインタラクションシグナルを生成する
 
-1. Open a new **InPrivate** or **Incognito** browser window. Navigate to Copilot studio and Sign in with **Patti Fernandes** credentials from the **Resources** tab. Complete the authentication steps if necessary.
+1. 新しい **InPrivate** または **Incognito** ブラウザーウィンドウを開きます。Copilot Studio にナビゲートして、**リソース** タブから **Patti Fernandes** の認証情報でサインインします。必要に応じて認証ステップを完了します。
 
     ```
     https://copilot.microsoft.com
     ```
 
-   - **Email:** <inject key="User 01 UPN"></inject>
-   - **Password:** <inject key="User's Password"></inject>
+   - **メール:** <inject key="User 01 UPN"></inject>
+   - **パスワード:** <inject key="User's Password"></inject>
 
-2. From the navigation, click **All agents** and select **Zava HR Assistant** , click **Add**.
+2. ナビゲーションから **すべてのエージェント** をクリックして、**Zava HR Assistant** を選択し、**追加** をクリックします。
 
 	![](./media/l06-e2-t1-s2.png)
 
-3. In the input field, enter the following prompt:
+3. 入力フィールドに以下のプロンプトを入力します:
 
    ```
    Summarise the contents of Zava_Employee_Records.xlsx from the HR SharePoint site
    ```
 
-4. Wait for the response and note what Copilot returns.
+4. 応答を待ち、Copilot が返すものをメモします。
 
 	![](./media/l06-e2-t1-s4.png)
 
-5. Enter the following second prompt:
+5. 以下の 2 番目のプロンプトを入力します:
 
    ```
    Find all employee salary information across Zava HR documents
    ```
 
-6. Wait for the response.
+6. 応答を待ちます。
 
 	![](./media/l06-e2-t1-s5.png)
 
-7. Enter the following third prompt:
+7. 以下の 3 番目のプロンプトを入力します:
 
    ```
    What does the Zava payroll report for Q1 2025 contain?
    ```
 
-8. Wait for the response.
+8. 応答を待ちます。
 
 	![](./media/l06-e2-t1-s6.png)
 
 ---
 
-## Exercise 3: Explore the DSPM Posture Dashboard and Activate One-Click Policies
+## エクササイズ 3: DSPM 体勢ダッシュボードを探索し、ワンクリックポリシーを有効化する
 
-### Task 1: Review the DSPM Posture Dashboard
+### タスク 1: DSPM 体勢ダッシュボードをレビューする
 
-1. Return to the **ODL User** session in the Microsoft Purview portal .
+1. Microsoft Purview ポータルの **ODL ユーザー** セッションに戻ります。
 
     ```
     https://purview.microsoft.com
     ```
 
-2. In the left navigation pane, select **DSPM** from **Solutions** .
+2. 左ナビゲーションペインから、**ソリューション** の **DSPM** を選択します。
 
 	![](./media/l06-e1-t2-s2.png)
 
-3. On the **DSPM** landing page, review the **Posture** dashboard.
+3. **DSPM** ランディングページで、**体勢** ダッシュボードをレビューします。
 
 	![](./media/l06-e3-t1-s3.png)
 
 ---
 
-### Task 2: Activate the Detect Risky AI Usage One-Click Policy
+### タスク 2: リスクの高い AI 使用検出ワンクリックポリシーを有効化する
 
-1. On the **DSPM** landing page, in the left sub-navigation, select **Tasks and actions** and click **Remediation actions**.
+1. **DSPM** ランディングページの左サブナビゲーションから、**タスクとアクション** を選択して **修復アクション** をクリックします。
 
 	![](./media/l06-e3-t2-s0.png)
 
-2. Select **Detect risky interactions in AI apps** to expand it.
+2. **AI アプリで危険なインタラクションを検出** を選択して展開します。
 
    ![](./media/l06-e3-t2-s1.png)
 
-3. Select **Create Policy** to enable the **DSPM for AI - Detect risky AI usage** Insider Risk Management policy.
+3. **ポリシーを作成** を選択して、**DSPM for AI - 危険な AI 使用を検出** インサイダーリスク管理ポリシーを有効化します。
 
 	![](./media/l06-e3-t2-s2.png)
 
-4. Confirm that the policy status updates to **On** or **Active**. Close the tab.
+4. ポリシーのステータスが **オン** または **アクティブ** に更新されることを確認します。タブを閉じます。
 
 	![](./media/l06-e3-t2-s4.png)
 
-   > **Note:** This Insider Risk Management policy detects risky prompts and responses in Microsoft 365 Copilot, agents, and other generative AI apps — including prompt injection attempts, accessing protected materials, and other high-risk interaction patterns. The Adele Vance interactions generated in Exercise 2 will be evaluated by this policy.
+   > **注:** このインサイダーリスク管理ポリシーは、Microsoft 365 Copilot、エージェント、および他の生成 AI アプリにおける危険なプロンプトと応答を検出します。これには、プロンプトインジェクション試行、保護対象素材へのアクセス、およびその他の高リスクインタラクションパターンが含まれます。エクササイズ 2 で生成された Adele Vance インタラクションはこのポリシーによって評価されます。
 
 ---
 
-### Task 3: Activate the Sensitive Data Protection One-Click Policy
+### タスク 3: 機密データ保護ワンクリックポリシーを有効化する
 
-1. On the **Remediation actions** page, select **Safeguard sensitive data in Microsoft 365 Copilot interactions** to expand it.
+1. **修復アクション** ページで、**Microsoft 365 Copilot インタラクションで機密データを保護** を選択して展開します。
 
 	![](./media/l06-e3-t3-s1.png)
 
-2. Select **Get started** to enable this DLP policy.
+2. **はじめに** を選択してこの DLP ポリシーを有効化します。
 
 	![](./media/l06-e3-t3-s2.png)
 
-3. On the data pane, confirm credit card is present in **Sensitive info types**.
+3. データペインで、**機密情報タイプ** にクレジットカードが存在することを確認します。
 
 	![](./media/l06-e3-t3-s3.png)
 
-4. If not present click **+ Add** and Select **Credit Card Number**. Then select **Add**.
+4. 存在しない場合は **+ 追加** をクリックして **クレジット カード番号** を選択します。次に **追加** を選択します。
 
 	![](./media/l06-e3-t3-s4.png)
 
-5. Under **Actions**, select **Restrict user prompts from being processed**. Then select **Create policy**.
+5. **アクション** の下で、**ユーザープロンプトが処理されることを制限** を選択します。次に **ポリシーを作成** を選択します。
 
 	![](./media/l06-e3-t3-s5.png)
 
-8. Confirm the policy is active.
+8. ポリシーがアクティブであることを確認します。
 
 	![](./media/l06-e3-t3-s8.png)
 
 ---
 
-## Exercise 4: Review Data Risk Assessment Results and Apply Remediation
+## エクササイズ 4: データリスク評価結果をレビューし、修復を適用する
 
-> **Note:** Assessments may take some time. You can return to this exercise at the end of the labs if the assessment is still in progress.
+> **注:** 評価には時間がかかる場合があります。評価がまだ進行中の場合は、ラボの最後にこのエクササイズに戻ることができます。
 
-### Task 1: Return to the Data Risk Assessment Results
+### タスク 1: データリスク評価結果に戻る
 
-1. In the left sub-navigation, Select **Data risk assessments** under **Discover**.
+1. 左サブナビゲーションから、**検出** の下の **データリスク評価** を選択します。
 
    ![](./media/l06-e4-t1-s1.png)
 
-2. On the **Data risk assessments** page, locate **Zava SharePoint Oversharing Assessment**.
+2. **データリスク評価** ページで、**Zava SharePoint Oversharing Assessment** を探します。
 
    ![](./media/l06-e4-t1-s2.png)
 
-   >**Note** - It can take time get Completed maximum upto 24 hours
+   > **注** - 完了までに時間がかかる場合があります。最大で 24 時間かかることがあります
 
-3. Confirm the status shows **Completed**. If the status still shows **In progress**, wait for it to complete before continuing.
+3. ステータスが **完了** を表示していることを確認します。ステータスがまだ **進行中** を表示している場合は、続行する前に完了するまで待ちます。
 
-4. Select **Zava SharePoint Oversharing Assessment** to open the results.
-
----
-
-### Task 2: Review Overshared Items [Optional]
-
-1. On the assessment results page, select the **Items** tab.
-
-2. Review the list of potentially overshared items found across the Zava HR and Finance SharePoint sites.
-
-3. Note the following for each item:
-
-   - **File name**
-   - **Sensitivity label** — confirm that HR-Data labelled files appear.
-   - **Sharing scope** — note whether items are shared with **Everyone**, **All authenticated users**, or specific groups.
-   - **Sensitive info types detected**
-
-4. Locate **Zava_Employee_Records.xlsx** in the results and select it.
-
-5. Review the item detail panel — note the sensitive info types detected, sharing permissions, and label applied.
-
-6. Close the item detail panel.
+4. **Zava SharePoint Oversharing Assessment** を選択して結果を開きます。
 
 ---
 
-### Task 3: Apply Remediation — Restrict Access by Label [Optional]
+### タスク 2: オーバーシェアされたアイテムをレビューする [オプション]
 
-1. On the assessment results page, select the **Protect** tab.
+1. 評価結果ページで、**アイテム** タブを選択します。
 
-2. Locate the **Restrict access by label** remediation action.
+2. Zava HR および Finance SharePoint サイト全体で検出されたオーバーシェアされた可能性のあるアイテムのリストをレビューします。
 
-3. Select **Restrict access by label**.
+3. 各アイテムについて以下をメモします:
 
-4. On the remediation panel, confirm that **Zava-Confidential/HR-Data** is listed as the label to restrict.
+   - **ファイル名**
+   - **機密性ラベル** — HR-Data ラベル付きファイルが表示されることを確認します。
+   - **共有範囲** — アイテムが **全員** と共有されているか、**認証済みのすべてのユーザー**、または特定のグループと共有されているかをメモします。
+   - **検出された機密情報タイプ**
 
-5. Review the action — this will create or reference a DLP policy that restricts access to items carrying the HR-Data label.
+4. 結果から **Zava_Employee_Records.xlsx** を見つけて選択します。
 
-6. Select **Apply** or **Confirm** to activate the remediation.
+5. アイテムの詳細パネルをレビューします。検出された機密情報タイプ、共有アクセス許可、および適用されたラベルをメモします。
 
-7. Confirm that the remediation action status updates to **Applied**.
-
----
-
-### Task 4: Apply Remediation — Enable SharePoint Restricted Content Discovery [Optional]
-
-1. On the **Protect** tab, locate the **Restrict all items** or **Enable Restricted Content Discovery** remediation action.
-
-2. Select the action to open the configuration panel.
-
-3. Review the description — SharePoint Restricted Content Discovery prevents items in the selected site from being surfaced in Microsoft 365 Copilot responses for users who do not have explicit access.
-
-4. Confirm that the scope is set to the **Zava HR SharePoint site**.
-
-5. Select **Apply** or **Enable** to activate Restricted Content Discovery for the Zava HR site.
-
-6. Confirm that the action status updates to **Applied**.
-
-   > **Note:** SharePoint Restricted Content Discovery is one of the most effective controls available to prevent AI agents and Copilot from surfacing content from a SharePoint site to users who lack explicit permission. This differs from DLP — it operates at the site discovery level rather than at the content classification level.
+6. アイテム詳細パネルを閉じます。
 
 ---
 
-## Exercise 5: Investigate Agent Activity and AI Interactions
+### タスク 3: 修復を適用 — ラベル別アクセスを制限 [オプション]
 
-### Task 1: Review the Apps and Agents Dashboard
+1. 評価結果ページで、**保護** タブを選択します。
 
-1. In the left sub-navigation,Select **Apps and agents** under **Discover**.
+2. **ラベル別アクセスを制限** 修復アクションを探します。
+
+3. **ラベル別アクセスを制限** を選択します。
+
+4. 修復パネルで、**Zava-Confidential/HR-Data** が制限するラベルとしてリストされていることを確認します。
+
+5. アクションをレビューします。これは、HR-Data ラベルを持つアイテムへのアクセスを制限する DLP ポリシーを作成または参照します。
+
+6. **適用** または **確認** を選択して修復を有効化します。
+
+7. 修復アクションのステータスが **適用済み** に更新されることを確認します。
+
+---
+
+### タスク 4: 修復を適用 — SharePoint Restricted Content Discovery を有効化 [オプション]
+
+1. **保護** タブで、**すべてのアイテムを制限** または **Restricted Content Discovery を有効化** 修復アクションを探します。
+
+2. アクションを選択して構成パネルを開きます。
+
+3. 説明をレビューします。SharePoint Restricted Content Discovery は、明示的なアクセス権を持たないユーザーに対して、選択されたサイトのアイテムが Microsoft 365 Copilot の応答で表示されるのを防ぎます。
+
+4. スコープが **Zava HR SharePoint サイト** に設定されていることを確認します。
+
+5. **適用** または **有効化** を選択して Zava HR サイトの Restricted Content Discovery を有効化します。
+
+6. アクションのステータスが **適用済み** に更新されることを確認します。
+
+   > **注:** SharePoint Restricted Content Discovery は、AI エージェントと Copilot が明示的なアクセス権を持たないユーザーに対して SharePoint サイトのコンテンツを表示するのを防ぐために利用可能な最も効果的なコントロールの 1 つです。これは DLP とは異なります。コンテンツ分類レベルではなく、サイト検出レベルで動作します。
+
+---
+
+## エクササイズ 5: エージェントアクティビティと AI インタラクションを調査する
+
+### タスク 1: Apps and Agents ダッシュボードをレビューする
+
+1. 左サブナビゲーションから、**検出** の下の **Apps and Agents** を選択します。
 
    ![](./media/l6e5t1s1.png)
 
-3. On the **Apps and agents** dashboard, review the list of AI apps detected across the tenant.
+3. **Apps and Agents** ダッシュボードで、テナント全体で検出された AI アプリのリストをレビューします。
 
    ![](./media/l6e5t1s2.png)
 
-3. On the **Apps and agents** dashboard, select **Agents**.
+3. **Apps and Agents** ダッシュボードで、**エージェント** を選択します。
 
    ![](./media/l6e5t1s3.png)
 
-6. Select **Zava HR Assistant** to open its agent details.
+6. **Zava HR Assistant** を選択してエージェント詳細を開きます。
 
    ![](./media/l6e5t1s4.png)
 
 
-7. On the agent details panel, review the following:
+7. エージェント詳細パネルで、以下をレビューします:
 
-   - **Sensitive data accessed** — types and volume of sensitive content the agent has referenced.
-   - **Policy coverage** — which Purview policies are protecting data accessed by this agent.
-   - **Users Risk And activity** — which users have interacted with this agent.
+   - **アクセスされた機密データ** — エージェントが参照した機密コンテンツのタイプと量。
+   - **ポリシーカバレッジ** — このエージェントがアクセスするデータを保護する Purview ポリシー。
+   - **ユーザーリスクとアクティビティ** — このエージェントと相互作用したユーザー。
 
    ![](./media/l6e5t1s5.png)
 
-8. Close the agent details panel.
+8. エージェント詳細パネルを閉じます。
 
 ---
 
-### Task 2: Investigate AI Activities in Activity Explorer [Optional]
+### タスク 2: アクティビティエクスプローラーで AI アクティビティを調査する [オプション]
 
-1. In the left sub-navigation, select **Discover**.
+1. 左サブナビゲーションから、**検出** を選択します。
 
-2. Select **Activity explorer**.
+2. **アクティビティエクスプローラー** を選択します。
 
-3. On the **Activity explorer** page, select the **AI activities** tab.
+3. **アクティビティエクスプローラー** ページで、**AI アクティビティ** タブを選択します。
 
-4. In the filter bar, select **User** and enter `Patti Fernandes`.
+4. フィルターバーで **ユーザー** を選択して `Patti Fernandes` と入力します。
 
-5. Select **Apply** to filter results to Adele's interactions.
+5. **適用** を選択して結果を Adele のインタラクションにフィルタリングします。
 
-6. Review the interaction events listed in the filtered view.
+6. フィルタリングされたビューでリストされたインタラクションイベントをレビューします。
 
-7. Select an interaction event that references a sensitive file — for example, one referencing `Zava_Employee_Records.xlsx` or `Zava_Payroll_Q1_2025.xlsx`.
+7. 機密ファイルを参照するインタラクションイベントを選択します。たとえば、`Zava_Employee_Records.xlsx` または `Zava_Payroll_Q1_2025.xlsx` を参照するイベントなど。
 
-8. On the event detail panel, review the following fields:
+8. イベント詳細パネルで、以下のフィールドをレビューします:
 
-    - **Date and time**
-    - **User**
-    - **Activity type**
-    - **AI app**
-    - **File referenced**
-    - **Sensitivity label on file**
-    - **DLP rule matched** — if applicable
+    - **日時**
+    - **ユーザー**
+    - **アクティビティタイプ**
+    - **AI アプリ**
+    - **参照されたファイル**
+    - **ファイルの機密性ラベル**
+    - **DLP ルールがマッチ** — 該当する場合
 
-9. Note whether the DLP policy **Zava - Block HR Data in M365 Copilot** appears as matched for any of the HR-labelled file interactions.
+9. HR ラベル付きファイルのインタラクションに対して DLP ポリシー **Zava - Block HR Data in M365 Copilot** がマッチしたとして表示されるかどうかをメモします。
 
-10. Close the event detail panel.
+10. イベント詳細パネルを閉じます。
 
-11. Remove the user filter and apply a filter for **Sensitivity label** set to **Zava-Confidential/HR-Data**.
+11. ユーザーフィルターを削除して、**機密性ラベル** を **Zava-Confidential/HR-Data** に設定するフィルターを適用します。
 
-12. Review the results — these show all AI interactions across the tenant that involved a file carrying the HR-Data label.
+12. 結果をレビューします。これらは、HR-Data ラベルを持つファイルに関与したテナント全体の AI インタラクションをすべて表示します。
 
 ---
 
-## Summary
+## まとめ
 
-In this lab, you initiated a custom DSPM data risk assessment against the Zava HR and Finance SharePoint sites at the start of Day 3, ensuring results were available for investigation later in the lab. You registered an Entra app and configured the item-level scan connection required by DSPM. As Patti Fernandes, you generated three realistic Microsoft 365 Copilot interaction events referencing sensitive labelled files including employee records, payroll data, and financial projections — creating the AI activity signals needed for investigation throughout Day 3.
+このラボでは、3 日目の開始時に Zava HR および Finance SharePoint サイトに対するカスタム DSPM データリスク評価を実行し、ラボの後半で調査できるように結果が利用可能になることを確認しました。Entra アプリを登録し、DSPM で必要なアイテムレベルスキャン接続を構成しました。Patti Fernandes として、従業員記録、給与データ、財務予測を含む機密ラベル付きファイルを参照する 3 つの現実的な Microsoft 365 Copilot インタラクションイベントを生成し、3 日目全体を通じた調査に必要な AI アクティビティシグナルを作成しました。
 
-You explored the DSPM Posture dashboard and reviewed its key metrics, top objectives, and Security Copilot suggested prompts. You activated two one-click policies: the DSPM for AI risky AI usage Insider Risk Management policy and the sensitive info detection DLP policy for Copilot interactions. You reviewed the data risk assessment results, identified overshared sensitive items in the Zava HR and Finance sites, and applied two remediation actions: restricting access by the HR-Data sensitivity label and enabling SharePoint Restricted Content Discovery on the Zava HR site. Finally you investigated Patti Fernandes Copilot interaction events in the DSPM Activity Explorer AI activities tab, reviewing file references, sensitivity labels, and DLP match records — building the evidence base for the Day 3 compliance review.
+DSPM 体勢ダッシュボードを探索し、その主要メトリクス、トップオブジェクティブ、および Security Copilot で提案されるプロンプトをレビューしました。2 つのワンクリックポリシーを有効化しました。DSPM for AI 危険な AI 使用インサイダーリスク管理ポリシーと Copilot インタラクションの機密情報検出 DLP ポリシーです。データリスク評価結果をレビューし、Zava HR および Finance サイト全体のオーバーシェアされた機密アイテムを特定し、2 つの修復アクションを適用しました。HR-Data 機密性ラベル別にアクセスを制限することと、Zava HR サイトで SharePoint Restricted Content Discovery を有効化することです。最後に、DSPM アクティビティエクスプローラー AI アクティビティタブで Patti Fernandes の Copilot インタラクションイベントを調査し、ファイル参照、機密性ラベル、DLP マッチレコードをレビューしました。3 日目のコンプライアンスレビューのための証拠ベースを構築しました。
