@@ -1,224 +1,224 @@
-# Lab 05: Microsoft Defender — AI Agent Inventory and Threat Hunting
+# Lab 05: Microsoft Defender — AI エージェント インベントリと脅威ハンティング
 
-## Introduction
+## 概要
 
-Microsoft Defender for Cloud Apps provides a dedicated AI agent inventory that discovers all Copilot Studio custom agents in the tenant and exposes them for security investigation. Combined with the Advanced Hunting `AIAgentsInfo` table in Microsoft Defender XDR, the security team can query agent configurations, detect misconfigurations, identify governance gaps, and proactively hunt for risky agent behaviour — all without leaving the Defender portal.
+Microsoft Defender for Cloud Apps には、テナント内のすべての Copilot Studio カスタム エージェントを発見し、セキュリティ調査のために公開する専用 AI エージェント インベントリが用意されています。Microsoft Defender XDR の Advanced Hunting テーブル「AIAgentsInfo」と組み合わせることで、セキュリティ チームはエージェント構成をクエリし、設定の誤りを検出し、ガバナンスのギャップを特定し、Defender ポータルを離れることなく、リスクのあるエージェント動作を積極的にハンティングすることができます。
 
-In this lab, you will enable Defender preview features, activate the Copilot Studio AI agent inventory, and connect it to Power Platform. Patti Fernandes will then explore the AI agent inventory, investigate Zava agent configurations, and run Advanced Hunting KQL queries to identify potential security risks across the Zava agent estate.
-
----
-
-## Scenario
-
-Zava's SOC team has been asked to confirm that all deployed AI agents are visible in the Defender portal and that the security team has the tooling in place to hunt for misconfigured or risky agents. Patti Fernandes will use the AI agent inventory to review Zava agent properties — including authentication type, knowledge sources, and owner assignments — and run a series of community and custom KQL queries to surface any configuration risks. Any findings will be documented for the CISO review at the end of Day 2.
+このラボでは、Defender プレビュー機能を有効にし、Copilot Studio AI エージェント インベントリをアクティブ化して、Power Platform に接続します。その後、Patti Fernandes が AI エージェント インベントリを確認し、Zava エージェント構成を調査し、Advanced Hunting KQL クエリを実行して、Zava エージェント資産全体の潜在的なセキュリティ リスクを特定します。
 
 ---
 
-## Objectives
+## シナリオ
 
-- Enable Microsoft Defender preview features for Cloud Apps, Defender for Cloud, and Defender XDR.
-- Enable the Copilot Studio AI agent inventory in Defender for Cloud Apps settings.
-- Complete the AI agent inventory onboarding in Power Platform Admin Center.
-- Confirm the green Connected status in the Defender portal.
-- Explore the AI agent inventory and review Zava agent details.
-- Use Go hunt to open Advanced Hunting pre-filtered for a specific agent.
-- Run community queries from the AI Agents folder to identify unauthenticated and misconfigured agents.
-- Run a custom KQL query to review all Zava agent configurations in a single view.
-- Review the Defender Alerts queue for Cloud Apps agent-related activity.
+Zava のセキュリティ オペレーション センター (SOC) チームは、デプロイ済みのすべての AI エージェントが Defender ポータルで表示され、セキュリティ チームが設定が誤ったエージェントやリスクのあるエージェントをハンティングするためのツールを備えていることを確認するよう求められています。Patti Fernandes は AI エージェント インベントリを使用して、認証タイプ、知識ソース、所有者割り当てを含む Zava エージェント プロパティを確認し、一連のコミュニティおよびカスタム KQL クエリを実行して、設定リスクを表面化します。すべての検出結果は Day 2 の終わりに CISO レビュー用にドキュメント化されます。
 
 ---
 
-## Lab Duration
+## 目標
 
-Estimated time: **60 minutes**
+- Microsoft Defender プレビュー機能を Cloud Apps、Defender for Cloud、および Defender XDR に対して有効にします。
+- Defender for Cloud Apps 設定で Copilot Studio AI エージェント インベントリを有効にします。
+- Power Platform Admin Center で AI エージェント インベントリのオンボーディングを完了します。
+- Defender ポータルで緑色の「接続済み」ステータスを確認します。
+- AI エージェント インベントリを確認し、Zava エージェントの詳細を確認します。
+- Go hunt を使用して、Advanced Hunting を開き、特定のエージェントに対してプリフィルタリングします。
+- AI Agents フォルダーのコミュニティ クエリを実行して、認証されていないエージェントと設定が誤ったエージェントを特定します。
+- カスタム KQL クエリを実行して、すべての Zava エージェント構成を単一ビューで確認します。
+- Cloud Apps エージェント関連アクティビティの Defender アラート キューを確認します。
 
 ---
 
-## Exercise 1: Enable Defender Preview Features
+## ラボ期間
 
-### Task 1: Enable Preview Features in Microsoft Defender XDR
+推定時間: **60 分**
 
-1. Open a browser and navigate to **Microsoft Defender** using the URL
+---
+
+## 演習 1: Defender プレビュー機能を有効にする
+
+### タスク 1: Microsoft Defender XDR でプレビュー機能を有効にする
+
+1. ブラウザーを開き、以下の URL を使用して **Microsoft Defender** に移動します。
 
     ```
     https://security.microsoft.com
     ```
 
-2. Sign in with **ODL User** credentials if prompted.
+2. プロンプトが表示された場合は、**ODL ユーザー**の認証情報でサインインします。
 
-3. In the left navigation pane, expand **System(1)** and select **Settings(2)**.
+3. 左ナビゲーション ウィンドウで、**System(1)** を展開して **Settings(2)** を選択します。
 
-4. On the **Settings** page, select **Microsoft Defender XDR(3)**.
+4. **Settings** ページで、**Microsoft Defender XDR(3)** を選択します。
 
    ![](./media/l05-e1-t1-s4.png)
 
-5. In the left sub-navigation, select **Preview features**.
+5. 左側のサブナビゲーションで、**Preview features** を選択します。
 
    ![](./media/l05-e1-t1-s5.png)
 
-6. On the **Preview features** page, set the **Preview features** toggle to **On** if not already done.
+6. **Preview features** ページで、**Preview features** トグルを **On** に設定します (まだ設定されていない場合)。
 
-   - Make sure the checkbox for **Microsoft Defender XDR** and **Microsoft Defender for cloud apps** is enabled
+   - **Microsoft Defender XDR** と **Microsoft Defender for Cloud Apps** のチェックボックスが有効になっていることを確認します。
 
       ![](./media/l05-e1-t1-s6.png)
 
-   - Select **Save preferences**.
+   - **Save preferences** を選択します。
 
         ![](./media/l05-e1-t1-s7.png)
 
-   - Confirm that a success notification appears.
+   - 成功通知が表示されていることを確認します。
 
         ![](./media/l05-e1-t1-s8.png)
 
 ---
 
-## Exercise 2: Enable the Copilot Studio AI Agent Inventory
+## 演習 2: Copilot Studio AI エージェント インベントリを有効にする
 
-### Task 1: New App registration in azure portal
+### タスク 1: Azure ポータルで新しいアプリ登録を作成する
 
-1. Navigate to azure portal using the URL and Sign in with **ODL User** credentials if prompted.
+1. 以下の URL を使用して Azure ポータルに移動し、プロンプトが表示された場合は **ODL ユーザー**の認証情報でサインインします。
 
     ```
     https://portal.azure.com
     ```
 
-1. Select the Cloud Shell icon from the upper-right corner of the page to launch an Azure Cloud Shell session.
+1. ページの右上隅から Cloud Shell アイコンを選択して、Azure Cloud Shell セッションを起動します。
 
    ![](./media/appid.png)
 
-    >**Note**: If prompted, complete the Cloud Shell initialization before proceeding
+    >**注**: プロンプトが表示された場合は、続行する前に Cloud Shell の初期化を完了してください。
 
-1. Click on **Manage Files** and select **Upload** 
+1. **Manage Files** をクリックして **Upload** を選択します。
 
    ![](./media/appid2.png)
  
-    - Upload **Create-CopilotWebhookApp.ps1** from C:\LabFiles\Create-CopilotWebhookApp.ps1
+    - C:\LabFiles\Create-CopilotWebhookApp.ps1 から **Create-CopilotWebhookApp.ps1** をアップロードします。
     
-    - make sure script is uploaded by the confirmation pop-up
+    - 確認ポップアップでスクリプトがアップロードされていることを確認します。
 
        ![](./media/appid3.png)
 
 
-1. Execute the command in the cloudshell 
+1. CloudShell でコマンドを実行します。
 
     ```
     .\Create-CopilotWebhookApp.ps1 -TenantId "<Paste your TenantId>" -Endpoint "https://mcsaiagents.security.core.microsoft/v1/protection" -DisplayName "Copilot Security Integration - Production" -FICName "ProductionFIC"
     ```
 
-    - Navigate **Microsoft Entra ID** on the azure portal
+    - Azure ポータルで **Microsoft Entra ID** に移動します。
 
          ![](./media/appid4.png)
 
-    - Copy **Tenant ID** to use in the command
+    - コマンドで使用する **Tenant ID** をコピーします。
 
          ![](./media/appid5.png)
 
    ![](./media/appid6.png)
 
-1. Navigate to the link and paste the code to complete the authentication
+1. リンクに移動して、認証を完了するためにコードを貼り付けます。
 
    ![](./media/appid7.png)
 
-1. Copy the App ID as it will be used in task while connecting copilot and defender
+1. Copilot と Defender を接続するタスク時に使用されるため、App ID をコピーします。
 
    ![](./media/appid8.png)
 
-### Task 2: Connect Defender and Copilot studio
+### タスク 2: Defender と Copilot Studio を接続する
 
-1. Navigate back to **Settings** and select **Security for AI**.
+1. **Settings** に戻り、**Security for AI** を選択します。
 
    ![](./media/l05-e2-t1-s2.png)
 
-4. Scroll down and find **Copilot Studio** and click on **Connect** to begin the integration setup.
+4. 下にスクロールして **Copilot Studio** を見つけ、**Connect** をクリックして統合セットアップを開始します。
 
    ![](./media/l05-e2-t1-s4.png)
 
-5. In the Copilot Studio real-time protection pane, verify that Real-time protection is enabled and review the generated Power Platform Integration URL.
+5. Copilot Studio リアルタイム保護ペインで、リアルタイム保護が有効になっていることを確認し、生成された Power Platform 統合 URL を確認します。
 
    ![](./media/l05-e2-t1-s5.png)
 
-6. Enter the required App ID in the App ID field and click Save to complete the Copilot Studio real-time protection configuration.
+6. App ID フィールドに必須の App ID を入力し、**Save** をクリックして Copilot Studio リアルタイム保護構成を完了します。
 
    ![](./media/l05-e2-t1-s6.png)
 
    ![](./media/l05-e2-t1-s7.png)
 
-   > **Note:** Enabling this setting initiates the connection between Defender for Cloud Apps and Copilot Studio. The second step in Power Platform Admin Center must be completed before the green Connected status appears.
+   > **注**: この設定を有効にすると、Defender for Cloud Apps と Copilot Studio 間の接続が開始されます。Power Platform Admin Center での 2 番目のステップを完了してから、緑色の「接続済み」ステータスが表示されます。
 
 ---
 
-### Task 3: Complete Onboarding in Power Platform Admin Center
+### タスク 3: Power Platform Admin Center でオンボーディングを完了する
 
-1. Open a new browser tab and navigate to **Power Platform** using the below URL.
+1. 新しいブラウザー タブを開き、以下の URL を使用して **Power Platform** に移動します。
 
     ```
     https://admin.powerplatform.microsoft.com
     ```
 
-2. Sign in with **ODL User** credentials if prompted.
+2. プロンプトが表示された場合は、**ODL ユーザー**の認証情報でサインインします。
    - **Email/Username:** <inject key="AzureAdUserEmail"></inject>
    - **Password:** <inject key="AzureAdUserPassword"></inject>
 
-3. In the left navigation pane, click **Security** and select **Threat Detection** and locate **Microsoft Defender - Copilot Studio Agents (Preview)**.
+3. 左ナビゲーション ウィンドウで **Security** をクリックして **Threat Detection** を選択し、**Microsoft Defender - Copilot Studio Agents (Preview)** を見つけます。
 
    ![](./media/l5e2t2s3.png)   
 
-7. Set the **Enable Microsoft Defender - Copilot Studio Agents** toggle to **On** and click on **Manage**.
+7. **Enable Microsoft Defender - Copilot Studio Agents** トグルを **On** に設定して **Manage** をクリックします。
 
    ![](./media/l5e2t2s5.png)  
 
-1. Select your **Dev** environment and click **Setup**
+1. **Dev** 環境を選択して **Setup** をクリックします。
 
    ![](./media/l5e2t2s6.png)
 
-1. Enable the checkbox for **Allow Copilot Studio to share data with a threat detection partner** and enter the **Azure Entra App ID** and **Endpoint link** and click **save**
+1. **Allow Copilot Studio to share data with a threat detection partner** のチェックボックスを有効にして、**Azure Entra App ID** と **Endpoint link** を入力し、**save** をクリックします。
 
    ![](./media/l5e2t2s7.png)
    
-   >Get Endpoint link and Entra App Id from the defender portal
+   >Endpoint link と Entra App ID を Defender ポータルから取得します。
       ![](./media/l05-e2-t1-s6.png)
 
 ---
 
-### Task 3: Confirm Connected Status in the Defender Portal
+### タスク 3: Defender ポータルで「接続済み」ステータスを確認する
 
-1. Return to the **ODL User** browser session at Defender Portal.
+1. **ODL ユーザー**ブラウザー セッションの Defender ポータルに戻ります。
 
     ```
     https://security.microsoft.com
     ```
 
-2. Navigate back to **Settings** and select **Security for AI**
+2. **Settings** に移動して **Security for AI** を選択します。
 
    ![](./media/l05-e2-t1-s2.png)
 
-6. Confirm that a green **Connected** indicator is displayed on the **Copilot Studio**.
+6. **Copilot Studio** に緑色の **Connected** インジケーターが表示されていることを確認します。
 
    ![](./media/l5e2t3s3.png)
 
-   > **Note:** It can take time for the initial connection status to update after completing both onboarding steps.
+   > **注**: 両方のオンボーディング ステップを完了した後、初期接続ステータスが更新されるまで時間がかかる場合があります。
 
 ---
 
-## Exercise 3: Explore the AI Agent Inventory
+## 演習 3: AI エージェント インベントリを確認する
 
-### Task 1: Access the AI Agents Inventory
+### タスク 1: AI エージェント インベントリにアクセスする
 
-1. From the left navigation pane under **Assets**, select **AI Agents**.
+1. 左ナビゲーション ウィンドウの **Assets** から **AI Agents** を選択します。
 
    ![](./media/l5e3t1s2.png)
 
-   > **Note:** If **AI Agents** is not visible under Assets, confirm that preview features were enabled in Exercise 1 and that the inventory connection completed in Exercise 2. Wait up to 30 minutes after completing Exercise 2 before retrying.
+   > **注**: **AI Agents** が Assets の下に表示されない場合は、演習 1 でプレビュー機能が有効化されており、演習 2 でインベントリ接続が完了したことを確認してください。演習 2 の完了後、再試行する前に最大 30 分待機してください。
 
-3. On the **AI Agents** page, review the full list of agents discovered in the Zava tenant.
+3. **AI Agents** ページで、Zava テナントで発見されたエージェントの完全なリストを確認します。
 
-4. In the **Platform (1)** filter, select **Copilot Studio (2)** and **Apply (3)** to filter the view to Copilot Studio custom agents only.
+4. **Platform (1)** フィルターで **Copilot Studio (2)** を選択して **Apply (3)** をクリックし、ビューを Copilot Studio カスタム エージェントのみにフィルタリングします。
 
    ![](./media/l5e3t1s4.png)
 
-5. Confirm that the following three agents appear in the inventory:
+5. インベントリに以下の 3 つのエージェントが表示されていることを確認します。
 
-   | Agent Name | Status | Platform |
+   | エージェント名 | ステータス | プラットフォーム |
    |---|---|---|
    | Zava HR Assistant | Published | Copilot Studio |
    | Zava Finance Agent | Published | Copilot Studio |
@@ -228,13 +228,13 @@ Estimated time: **60 minutes**
 
 ---
 
-### Task 2: Review the Zava HR Assistant Agent Details
+### タスク 2: Zava HR Assistant エージェントの詳細を確認する
 
-1. On the **AI Agents** page, select **Zava HR Assistant** to open its details panel.
+1. **AI Agents** ページで **Zava HR Assistant** を選択して、その詳細ペインを開きます。
 
    ![](./media/l5e3t2s1.png)
 
-2. On the details panel, review and note the following fields:
+2. 詳細ペインで、以下のフィールドを確認します。
 
    - **Agent name**
    - **Status**
@@ -250,61 +250,61 @@ Estimated time: **60 minutes**
 
 ---
 
-### Task 3: Use Go Hunt to Open Advanced Hunting for the Zava HR Assistant
+### タスク 3: Go Hunt を使用して Zava HR Assistant の Advanced Hunting を開く
 
-1. On the **Zava HR Assistant** details panel, Click **Go hunt** button or link.
+1. **Zava HR Assistant** 詳細ペインで **Go hunt** ボタンまたはリンクをクリックします。
 
    ![](./media/l5e3t3s1.png)
 
-3. Confirm that the browser navigates to **Investigation & response > Hunting > Advanced hunting** with a pre-populated query scoped to the Zava HR Assistant agent.
+3. ブラウザーが **Investigation & response > Hunting > Advanced hunting** に移動し、Zava HR Assistant エージェントに対してスコープされたクエリが事前に入力されていることを確認します。
 
    ![](./media/l5e3t3s2.png)
 
-4. Review the pre-populated query to understand its structure.
+4. 事前に入力されたクエリを確認して、その構造を理解します。
 
-5. Select **Run query** to execute it.
+5. **Run query** を選択してクエリを実行します。
 
    ![](./media/l5e3t3s3.png)
 
-6. Review the results returned in the query output panel.
+6. クエリ出力パネルで返された結果を確認します。
 
    ![](./media/l5e3t3s4.png)
 
 ---
 
-## Exercise 4: Run Advanced Hunting Queries Against AIAgentsInfo
+## 演習 4: AIAgentsInfo に対して Advanced Hunting クエリを実行する
 
-### Task 1: Sign In to the Defender Portal as Patti Fernandes
+### タスク 1: Patti Fernandes として Defender ポータルにサインインする
 
-1. Open a new **InPrivate** or **Incognito** browser window.
+1. **InPrivate** または **Incognito** ブラウザー ウィンドウを新たに開きます。
 
-2. Navigate to **Defender Portal** using the below URL.
+2. 以下の URL を使用して **Defender ポータル**に移動します。
 
     ```
     https://security.microsoft.com
     ```
 
-3. Sign in with **Patti Fernandes** credentials from the **Resources** tab.
+3. **Resources** タブから **Patti Fernandes** の認証情報でサインインします。
    - **Email:** <inject key="User 01 UPN"></inject>
    - **Password:** <inject key="User's Password"></inject>
 
-4. In the left navigation pane, select **Investigation & response**.
+4. 左ナビゲーション ウィンドウで **Investigation & response** を選択します。
 
-5. Under **Investigation & response**, select **Hunting**.
+5. **Investigation & response** で **Hunting** を選択します。
 
-6. Select **Advanced hunting**.
+6. **Advanced hunting** を選択します。
 
    ![](./media/l5e3t3s2.png)
 
 ---
 
-### Task 2: Run a Custom Zava Agent Configuration Review Query
+### タスク 2: Zava エージェント構成確認カスタム クエリを実行する
 
-1. On the **Advanced hunting** page, select the **New query** tab to open a blank query editor.
+1. **Advanced hunting** ページで **New query** タブを選択して、空白のクエリ エディターを開きます。
 
    ![](./media/l5e4t2s1.png)
 
-2. In the query editor, enter the following KQL query:
+2. クエリ エディターに、以下の KQL クエリを入力します。
 
    ```
    AgentsInfo
@@ -326,22 +326,22 @@ Estimated time: **60 minutes**
    | sort by CreatedDateTime asc
    ```
 
-3. Select **Run query**.
+3. **Run query** を選択します。
 
    ![](./media/l5e4t2s2.png)
 
-4. Review the results returned for all three Zava agents.
+4. 3 つの Zava エージェント全体に対して返された結果を確認します。
 
    ![](./media/l5e4t2s3.png)
 
-6. Select **Save** to save the query.
+6. **Save** を選択してクエリを保存します。
 
    ![](./media/l5e4t2s4.png)
 
-7. In the **Save query** panel, enter the following and click **Save**
+7. **Save query** ペインで以下を入力して **Save** をクリックします。
 
    - **Query name:** `Zava Agent Configuration Review`
-   - **Location:** Select **My queries**.
+   - **Location:** **My queries** を選択します。
 
    ![](./media/l5e4t2s5.png)
 
@@ -349,29 +349,29 @@ Estimated time: **60 minutes**
 
 ---
 
-## Exercise 5: Review the Defender Alerts Queue for Agent-Related Activity [Optional]
+## 演習 5: エージェント関連アクティビティの Defender アラート キューを確認する [オプション]
 
-### Task 1: Filter the Alerts Queue by Cloud Apps Source
+### タスク 1: Cloud Apps ソースでアラート キューをフィルタリングする
 
-1. Remain signed in as **Patti Fernandes** in the Microsoft Defender portal.
+1. Microsoft Defender ポータルで **Patti Fernandes** としてサインイン状態を保ちます。
 
-2. In the left navigation pane, select **Incidents & alerts**.
+2. 左ナビゲーション ウィンドウで **Incidents & alerts** を選択します。
 
-3. Select **Alerts**.
+3. **Alerts** を選択します。
 
-4. On the **Alerts** page, select **Add filter**.
+4. **Alerts** ページで **Add filter** を選択します。
 
-5. In the filter dropdown, select **Service source**.
+5. フィルター ドロップダウンで **Service source** を選択します。
 
-6. Select **Microsoft Defender for Cloud Apps** as the filter value.
+6. フィルター値として **Microsoft Defender for Cloud Apps** を選択します。
 
-7. Select **Apply**.
+7. **Apply** を選択します。
 
-8. Review the alerts returned in the filtered view.
+8. フィルター済みビューで返されたアラートを確認します。
 
-9. If any alerts are present, select an alert to open its detail panel.
+9. アラートが存在する場合は、そのアラートを選択して詳細ペインを開きます。
 
-10. On the alert detail panel, review the following fields:
+10. アラート詳細ペインで、以下のフィールドを確認します。
 
     - **Alert name**
     - **Severity**
@@ -380,38 +380,38 @@ Estimated time: **60 minutes**
     - **Detection source**
     - **Activity log**
 
-11. Close the alert detail panel.
+11. アラート詳細ペインを閉じます。
 
-    > **Note:** In a newly configured lab environment, the Cloud Apps alerts queue may be empty or contain only connector-related events. Agent-related alerts will begin appearing as the Zava agents are invoked, real-time protection signals are generated, and policy violations occur across Day 2 and Day 3 labs. This step establishes familiarity with the alerts queue that Patti will use for incident investigation in Day 3.
-
----
-
-### Task 2: Check for Any Agent-Specific Incidents [Optional]
-
-1. In the left navigation pane, select **Incidents & alerts**.
-
-2. Select **Incidents**.
-
-3. On the **Incidents** page, in the search bar, enter `Zava`.
-
-4. Review any incidents returned that reference Zava agent activity.
-
-5. If an incident is present, select it to open the incident detail page.
-
-6. On the incident detail page, review the **Alerts** tab to see all alerts grouped into the incident.
-
-7. Review the **Evidence and response** tab to see affected entities.
-
-8. Close the incident and return to the **Incidents** page.
-
-   > **Note:** If no Zava-related incidents appear, this is expected at this stage of the course. Note the search and filter techniques demonstrated here — they will be used in Day 3 when active threat investigation tasks are introduced.
+    > **注**: 新しく構成されたラボ環境では、Cloud Apps アラート キューが空の場合があります。または、コネクタ関連のイベントのみが含まれている場合があります。エージェント関連アラートは、Zava エージェントが起動され、リアルタイム保護シグナルが生成され、Day 2 および Day 3 ラボ全体でポリシー違反が発生すると表示され始めます。このステップにより、Patti が Day 3 でのインシデント調査に使用するアラート キューの習熟度を確立します。
 
 ---
 
-## Summary
+### タスク 2: エージェント固有のインシデントを確認する [オプション]
 
-In this lab, you enabled Microsoft Defender preview features for Defender XDR and Defender for Cloud Apps, which are required to access the Copilot Studio AI agent inventory and the `AIAgentsInfo` advanced hunting schema. You enabled the Copilot Studio AI agent inventory in Defender for Cloud Apps settings and completed the corresponding onboarding step in Power Platform Admin Center to establish the data connection. You confirmed the green Connected status in the Defender portal. You explored the AI agent inventory under Assets, reviewed the Zava HR Assistant agent details including its authentication type, access control policy, knowledge sources, and owner assignments, and used the Go hunt action to open Advanced Hunting pre-filtered for that agent.
+1. 左ナビゲーション ウィンドウで **Incidents & alerts** を選択します。
 
-As Patti Fernandes, you ran two community queries from the AI Agents folder — detecting agents with no authentication and agents with hard-coded credentials — and reviewed the results against the Zava agent estate. You ran a custom Zava Agent Configuration Review KQL query to surface key security properties for all three Zava agents in a single view, and saved it for future use. You ran a second custom query to identify agents with overly broad access control policies. Finally, you reviewed the Defender Alerts queue filtered by Cloud Apps source and checked the Incidents page for any Zava-related activity, establishing the investigation baseline for Day 3.
+2. **Incidents** を選択します。
 
-Day 2 is now complete. Zava's agents are governed by Conditional Access policies, sensitive data is classified with Purview labels and protected by DLP controls, and the security team has full visibility into agent configurations and activity through the Defender AI agent inventory and Advanced Hunting.
+3. **Incidents** ページの検索バーで `Zava` を入力します。
+
+4. Zava エージェント アクティビティを参照するために返されたインシデントを確認します。
+
+5. インシデントが存在する場合は、それを選択してインシデント詳細ページを開きます。
+
+6. インシデント詳細ページで **Alerts** タブを確認して、インシデントにグループ化されたすべてのアラートを確認します。
+
+7. **Evidence and response** タブを確認して、影響を受けたエンティティを確認します。
+
+8. インシデントを閉じて **Incidents** ページに戻ります。
+
+   > **注**: コースのこの段階で Zava 関連のインシデントが表示されない場合、これは予想されています。ここで説明する検索およびフィルター手法に注意してください。これらは、Day 3 でアクティブな脅威調査タスクが導入されたときに使用されます。
+
+---
+
+## 概要
+
+このラボでは、Defender XDR および Defender for Cloud Apps の Microsoft Defender プレビュー機能を有効にしました。これらは Copilot Studio AI エージェント インベントリと `AIAgentsInfo` Advanced Hunting スキーマにアクセスするために必要です。Defender for Cloud Apps 設定で Copilot Studio AI エージェント インベントリを有効にし、データ接続を確立するために Power Platform Admin Center で対応するオンボーディング ステップを完了しました。Defender ポータルで緑色の「接続済み」ステータスを確認しました。Assets の AI エージェント インベントリを確認し、認証タイプ、アクセス制御ポリシー、知識ソース、所有者割り当てを含む Zava HR Assistant エージェントの詳細を確認しました。また、Go hunt アクションを使用して、Advanced Hunting を開き、そのエージェントに対してプリフィルタリングしました。
+
+Patti Fernandes として、AI Agents フォルダーから 2 つのコミュニティ クエリを実行しました。認証なしのエージェントと難しくされた認証情報を持つエージェントを検出し、Zava エージェント資産に対して結果を確認しました。すべての 3 つの Zava エージェントのキー セキュリティ プロパティを単一ビューで表示するために、カスタム Zava エージェント構成確認 KQL クエリを実行し、将来の使用のために保存しました。アクセス制御ポリシーが過度に広いエージェントを特定するために 2 番目のカスタム クエリを実行しました。最後に、Cloud Apps ソースでフィルタリングした Defender アラート キューを確認し、Incidents ページで Zava 関連アクティビティを確認して、Day 3 の調査ベースラインを確立しました。
+
+Day 2 が完了しました。Zava のエージェントは条件付きアクセス ポリシーによって管理されており、機密データは Purview ラベルで分類され、DLP コントロールで保護されています。セキュリティ チームは、Defender AI エージェント インベントリと Advanced Hunting を通じて、エージェント構成とアクティビティの完全な可視性を備えています。
