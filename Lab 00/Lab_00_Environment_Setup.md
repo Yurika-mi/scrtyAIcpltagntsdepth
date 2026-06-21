@@ -82,7 +82,7 @@
 
 10. サイトのプロビジョニングが完了するまで待機します。**[アクティブなサイト]** リストに URL **https://[TenantPrefix].sharepoint.com/sites/HR<inject key="Deployment ID" enableCopy="false"></inject>** が表示されていることを確認します。
 
-   > **注：** このサイトは、ラボ 00の演習 2 で作成した Zava HR アシスタント エージェント用の SharePoint ナレッジソースです。Copilot Studio でのエージェント接続では、**/sites/HR<inject key="Deployment ID" enableCopy="false"></inject>** が明示的に参照されます。これとは異なる URL スラッグは使用しません。
+   > **注：** このサイトは、ラボ 00 の演習 2 で作成した Zava HR アシスタント エージェント用の SharePoint ナレッジソースです。Copilot Studio でのエージェント接続では、**/sites/HR<inject key="Deployment ID" enableCopy="false"></inject>** が明示的に参照されます。これとは異なる URL スラッグは使用しません。
 
 11. 手順 3 から手順 9 までの同じ手順に従い、次のサイトを作成します。
 
