@@ -1,4 +1,4 @@
-<img width="1137" height="700" alt="image" src="https://github.com/user-attachments/assets/75c3067b-ca75-4d33-b783-41291a1abe1c" /><img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/2d3b1828-08db-4ac5-9af8-c72750450ec2" /><img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/7c4d73a1-5f9d-455c-887f-dd64b7b21236" /><img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/12cded5e-d096-479b-a428-0b9a13dfe0c9" /># ラボ 03: Zava エージェント ID の条件付きアクセス
+# ラボ 03: Zava エージェント ID の条件付きアクセス
 
 ## 概要
 
