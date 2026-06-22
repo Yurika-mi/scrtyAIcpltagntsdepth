@@ -1,4 +1,4 @@
-<img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/f3b607b2-8ad2-455d-a69c-66e30fc37434" /># ラボ 04: Microsoft Purview — 秘密度ラベルと Copilot 用 DLP
+# ラボ 04: Microsoft Purview — 秘密度ラベルと Copilot 用 DLP
 
 ## 概要
 
