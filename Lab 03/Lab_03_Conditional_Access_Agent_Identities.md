@@ -41,7 +41,7 @@ Agent Identities の条件付きアクセスは Microsoft Entra ID のプレビ�
 
 	![](./media/l03-e1-t1-s1.png)
 
-2. 検索バーに `Attribute Definition Administrator` と入力します。
+2. 検索バーに `属性定義管理者` と入力します。
 
 	![](./media/l03-e1-t1-s2.png)
 
